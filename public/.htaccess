@@ -1,0 +1,15 @@
+# Evitar listado de directorios
+Options -Indexes
+
+# Habilitar mod_rewrite
+RewriteEngine On
+
+# Redirigir todo a index.php si no es un archivo o carpeta existente
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [L]
+
+# Opcional: proteger archivos ocultos y de configuración
+<FilesMatch "^(\.env|\.htaccess)">
+    Require all denied
+</FilesMatch>
