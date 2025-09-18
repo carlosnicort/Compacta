@@ -40,18 +40,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $cod_grupo = strtoupper(substr($Etapa, 0, 3)) . $Curso . $Grupo;
             }
 
-            try {
-                $stmt = $pdo->prepare("
-                    INSERT INTO TI_Gr1 (cod_centro, Etapa, Modalidad, Curso, Grupo, cod_grupo, listado) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                ");
-                $stmt->execute([$cod_centro, $Etapa, $Modalidad, $Curso, $Grupo, $cod_grupo, $listado]);
-				$_SESSION['ultimo_grupo'] = $cod_grupo;
-				header("Location: menu_group.php");
-				exit();
-            } catch (PDOException $e) {
-                $msg = "Error al crear el grupo: " . $e->getMessage();
-            }
+       try {
+    $stmt = $pdo->prepare("
+        INSERT INTO TI_Gr1 (cod_centro, Etapa, Modalidad, Curso, Grupo, cod_grupo, listado) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ");
+    $stmt->execute([$cod_centro, $Etapa, $Modalidad, $Curso, $Grupo, $cod_grupo, $listado]);
+
+    // Guardar último grupo en sesión
+    $_SESSION['ultimo_grupo'] = $cod_grupo;
+
+    // ✅ Guardar como grupo actual
+    $_SESSION['current_group'] = $pdo->lastInsertId();
+
+    // ✅ Actualizar progreso del usuario
+    $stmt = $pdo->prepare("UPDATE usuarios SET progreso = 1 WHERE id_user = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+
+    // Redirigir al menú
+    header("Location: menu.php");
+    exit();
+
+} catch (PDOException $e) {
+    $msg = "Error al crear el grupo: " . $e->getMessage();
+}
+
         }
     } else {
         $msg = "Por favor, completa todos los campos correctamente.";

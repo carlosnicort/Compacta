@@ -1,17 +1,33 @@
 <?php
-require_once __DIR__ . '/../src/auth.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+session_start();
+require_once __DIR__ . '/../src/db.php';
+require_once __DIR__ . '/../src/auth.php'; 
 
 $msg = "";
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
-    $nombre = $_POST['nombre'] ?? '';
 
-    $result = registerUser($email, $password, $nombre);
-    if (isset($result['ok'])) {
-        $msg = "Usuario creado correctamente. <a href='/index.php'>Inicia sesión aquí</a>";
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $nombre = trim($_POST['nombre'] ?? '');
+
+    if ($email && $password && $nombre) {
+        $result = registerUser($email, $password, $nombre);
+
+        if (isset($result['ok'])) {
+            // ✅ Guardamos sesión al registrarse
+            $_SESSION['user_id'] = $result['id_user'];
+
+            header("Location: menu.php");
+            exit();
+        } else {
+            $msg = $result['error'] ?? "Error desconocido.";
+        }
     } else {
-        $msg = $result['error'] ?? "Error desconocido.";
+        $msg = "Todos los campos son obligatorios.";
     }
 }
 ?>
@@ -24,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
   <h1>Crear cuenta</h1>
   <?php if ($msg): ?>
-    <p><?= htmlspecialchars($msg) ?></p>
+    <p style="color:red;"><?= htmlspecialchars($msg) ?></p>
   <?php endif; ?>
   <form method="post">
     <label>Nombre:
@@ -38,5 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </label><br>
     <button type="submit">Registrarse</button>
   </form>
+
+  <p>¿Ya tienes cuenta? <a href="index.php">Inicia sesión</a></p>
 </body>
 </html>
