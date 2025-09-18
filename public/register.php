@@ -13,9 +13,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     $nombre = trim($_POST['nombre'] ?? '');
+    $rol = trim($_POST['rol'] ?? '');
+    $cod_centro = trim($_POST['cod_centro'] ?? '');
 
-    if ($email && $password && $nombre) {
-        $result = registerUser($email, $password, $nombre);
+    if ($email && $password && $nombre && $rol && $cod_centro) {
+        $result = registerUser($email, $password, $nombre, $rol, $cod_centro);
 
         if (isset($result['ok'])) {
             // ✅ Guardamos sesión al registrarse
@@ -52,6 +54,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <label>Password:
       <input type="password" name="password" required minlength="6">
     </label><br>
+	<label>Centro:
+      <input type="text" name="cod_centro" required minlength="11">
+    </label><br>
+	<label>Cargo:
+      <input type="text" name="cargo" required minlength="6">
+    </label><br>
+
     <button type="submit">Registrarse</button>
   </form>
 

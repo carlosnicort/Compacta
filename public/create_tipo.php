@@ -1,76 +1,168 @@
 <?php
-session_start();
-require_once __DIR__ . '/../src/db.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-// Verificar usuario
+session_start();
+require_once __DIR__ . '/../src/db.php'; // conexión a la base de datos
+
+// Verificar usuario logueado
 if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit();
 }
 
-// Guardar grupo seleccionado en sesión si llega por GET
-if (isset($_GET['grupo'])) {
-    $_SESSION['current_group'] = $_GET['grupo'];
-}
-
-// Verificar que hay grupo en sesión
-if (!isset($_SESSION['current_group'])) {
-    die("⚠️ No se ha seleccionado ningún grupo. <a href='menu.php'>Volver al menú</a>");
-}
-
-$current_group = $_SESSION['current_group'];
-// Obtener datos del grupo
-$stmt = $pdo->prepare("SELECT * FROM TI_Gr1 WHERE id = ? AND id_user = ?");
-$stmt->execute([$current_group, $_SESSION['user_id']]);
-$grupo = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$grupo) {
-    die("⚠️ Grupo no encontrado. <a href='menu.php'>Volver al menú</a>");
-}
-
 $msg = "";
 
-// Procesar formulario tipo de alumno
+// Procesar formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $tipo_acneae = trim($_POST['tipo_acneae'] ?? '');
+    $cod_grupo = trim($_POST['cod_grupo'] ?? '');
+    $Tipo1 = isset($_POST['Tipo1']) ? 1 : 0;
+    $Informe = isset($_POST['Informe']) ? 1 : 0;
+    $Perfil1 = $_POST['Perfil1'] ?? null;
+    $ExtraPerfil1 = $_POST['ExtraPerfil1'] ?? null;
+    $Perfil2 = $_POST['Perfil2'] ?? null;
+    $ExtraPerfil2 = $_POST['ExtraPerfil2'] ?? null;
+    $Otro = trim($_POST['Otro'] ?? '');
 
-    if ($tipo_acneae) {
-        // Aquí se insertarían los registros por alumno
-        // Por ahora solo un ejemplo de guardado simple
+    try {
         $stmt = $pdo->prepare("
-            INSERT INTO TI_Tipo (id_grupo, tipo_acneae)
-            VALUES (?, ?)
+            INSERT INTO TI_tipologia
+            (cod_grupo, Tipo1, Informe, Perfil1, ExtraPerfil1, Perfil2, ExtraPerfil2, Otro)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ");
-        $stmt->execute([$current_group, $tipo_acneae]);
-
-        // Actualizar progreso
-        $stmt = $pdo->prepare("UPDATE usuarios SET progreso = 2 WHERE id_user = ?");
-        $stmt->execute([$_SESSION['user_id']]);
-
-        $msg = "Tipo de alumnado creado correctamente.";
-    } else {
-        $msg = "Por favor, complete el campo.";
+        $stmt->execute([$cod_grupo, $Tipo1, $Informe, $Perfil1, $ExtraPerfil1, $Perfil2, $ExtraPerfil2, $Otro]);
+		header("Location: menu.php");
+		exit();
+    } catch (PDOException $e) {
+        $msg = "Error: " . $e->getMessage();
     }
 }
+
+// Obtener lista de grupos para seleccionar
+$gruposStmt = $pdo->query("SELECT cod_grupo FROM TI_Gr1 ORDER BY cod_grupo");
+$grupos = $gruposStmt->fetchAll(PDO::FETCH_COLUMN);
+
 ?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Crear Tipo de Alumnado</title>
+    <title>Crear Tipología</title>
 </head>
 <body>
-    <h2>Crear Tipo de Alumnado para Grupo <?= htmlspecialchars($grupo['cod_grupo']) ?></h2>
-    <?php if ($msg): ?>
-        <p style="color: <?= strpos($msg,'correctamente')!==false ? 'green':'red' ?>"><?= htmlspecialchars($msg) ?></p>
-    <?php endif; ?>
+<h2>Crear Tipología</h2>
 
-    <form method="POST">
-        <label>Tipo de ACNEAE:</label><br>
-        <input type="text" name="tipo_acneae" required><br><br>
-        <button type="submit">Guardar</button>
-    </form>
+<?php if($msg): ?>
+    <p style="color:<?= strpos($msg,'Error')===0 ? 'red' : 'green' ?>"><?= htmlspecialchars($msg) ?></p>
+<?php endif; ?>
+<form method="POST">
+    <label><input type="checkbox" name="Tipo1" id="Tipo1" onclick="togglePerfil1()"> Tipo1</label><br>
+    <label><input type="checkbox" name="Informe"> Informe</label><br><br>
 
-    <p><a href="ver_group.php?grupo=<?= $grupo['id'] ?>">⬅ Volver al grupo</a></p>
+    <label>Perfil1:</label><br>
+    <select name="Perfil1" id="Perfil1" onchange="toggleExtra1(); togglePerfil2();" disabled>
+        <option value="">Selecciona</option>
+        <option value="TDAH">TDAH</option>
+        <option value="Dislexia">Dislexia</option>
+        <option value="Autismo">Autismo</option>
+    </select><br><br>
+
+    <label>ExtraPerfil1:</label><br>
+    <select name="ExtraPerfil1" id="ExtraPerfil1" style="display:none;">
+        <option value="">Selecciona Perfil1 primero</option>
+    </select><br><br>
+
+    <label>Perfil2:</label><br>
+    <select name="Perfil2" id="Perfil2" onchange="toggleExtra2();" disabled>
+        <option value="">Selecciona Perfil1 primero</option>
+        <option value="TDAH">TDAH</option>
+        <option value="Dislexia">Dislexia</option>
+        <option value="Autismo">Autismo</option>
+    </select><br><br>
+
+    <label>ExtraPerfil2:</label><br>
+    <select name="ExtraPerfil2" id="ExtraPerfil2" style="display:none;">
+        <option value="">Selecciona Perfil2 primero</option>
+    </select><br><br>
+
+    <label>Otro:</label><br>
+    <input type="text" name="Otro" maxlength="255"><br><br>
+
+    <button type="submit">Guardar</button>
+    <button type="button" onclick="window.location='menu.php'">Volver al Menú</button>
+</form>
+
+<script>
+const extras = {
+    "TDAH": ["Leve", "Moderado", "Severo"],
+    "Dislexia": ["Lectora", "Escritura", "Comprensión"],
+    "Autismo": ["Nivel 1", "Nivel 2", "Nivel 3"]
+};
+
+// Habilita Perfil1 si Tipo1 está marcado
+function togglePerfil1() {
+    const tipo1 = document.getElementById('Tipo1').checked;
+    const perfil1 = document.getElementById('Perfil1');
+    perfil1.disabled = !tipo1;
+    if (!tipo1) {
+        perfil1.value = '';
+        toggleExtra1();
+        togglePerfil2();
+    }
+}
+
+// Muestra ExtraPerfil1 solo si Perfil1 tiene valor
+function toggleExtra1() {
+    const perfil1 = document.getElementById('Perfil1').value;
+    const extra1 = document.getElementById('ExtraPerfil1');
+    if (perfil1) {
+        extra1.style.display = 'inline';
+        extra1.innerHTML = '';
+        extras[perfil1].forEach(opt => {
+            let option = document.createElement('option');
+            option.value = opt;
+            option.text = opt;
+            extra1.add(option);
+        });
+    } else {
+        extra1.style.display = 'none';
+        extra1.innerHTML = '<option value="">Selecciona Perfil1 primero</option>';
+    }
+}
+
+// Habilita Perfil2 solo si Perfil1 tiene valor
+function togglePerfil2() {
+    const perfil1 = document.getElementById('Perfil1').value;
+    const perfil2 = document.getElementById('Perfil2');
+    perfil2.disabled = !perfil1;
+    if (!perfil1) {
+        perfil2.value = '';
+        toggleExtra2();
+    }
+}
+
+// Muestra ExtraPerfil2 solo si Perfil2 tiene valor
+function toggleExtra2() {
+    const perfil2 = document.getElementById('Perfil2').value;
+    const extra2 = document.getElementById('ExtraPerfil2');
+    if (perfil2) {
+        extra2.style.display = 'inline';
+        extra2.innerHTML = '';
+        extras[perfil2].forEach(opt => {
+            let option = document.createElement('option');
+            option.value = opt;
+            option.text = opt;
+            extra2.add(option);
+        });
+    } else {
+        extra2.style.display = 'none';
+        extra2.innerHTML = '<option value="">Selecciona Perfil2 primero</option>';
+    }
+}
+</script>
+
+
+<p><a href="logout.php">Cerrar sesión</a></p>
 </body>
 </html>
