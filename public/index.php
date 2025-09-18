@@ -13,14 +13,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
 
     if ($email && $password) {
-        $stmt = $pdo->prepare("SELECT id_user, password FROM usuarios WHERE email = ?");
+        $stmt = $pdo->prepare("SELECT id_user, email, nombre, cod_centro, rol, password FROM usuarios WHERE email = ?");
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user && password_verify($password, $user['password'])) {
-            // ✅ Guardar usuario en sesión
+            // Guardar datos esenciales en sesión
             $_SESSION['user_id'] = $user['id_user'];
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['nombre'] = $user['nombre'];
+            $_SESSION['cod_centro'] = $user['cod_centro'];
+            $_SESSION['rol'] = $user['rol'];
 
+            // Redirigir al menú principal
             header("Location: menu.php");
             exit();
         } else {
@@ -31,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
 <!doctype html>
 <html>
 <head>
@@ -45,10 +51,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <form method="post">
     <label>Email:
       <input type="email" name="email" required>
-    </label><br>
-    <label>Password:
+    </label><br><br>
+    <label>Contraseña:
       <input type="password" name="password" required>
-    </label><br>
+    </label><br><br>
     <button type="submit">Entrar</button>
   </form>
 
