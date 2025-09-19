@@ -1,31 +1,34 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 session_start();
-require_once __DIR__ . '/../src/db.php';
+require __DIR__ . '/../src/db.php'; // Aquí incluyes tu conexión PDO en $pdo
 
 $msg = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email'] ?? '');
+    // Sanitizar la entrada
+    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
     $password = $_POST['password'] ?? '';
 
     if ($email && $password) {
-        $stmt = $pdo->prepare("SELECT id_user, email, nombre, cod_centro, rol, password FROM usuarios WHERE email = ?");
+        // Buscar usuario
+        $stmt = $pdo->prepare("SELECT id_user, email, nombre, cod_centro, rol, password 
+                               FROM usuarios WHERE email = ?");
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        // Verificar contraseña
         if ($user && password_verify($password, $user['password'])) {
-            // Guardar datos esenciales en sesión
-            $_SESSION['user_id'] = $user['id_user'];
-            $_SESSION['email'] = $user['email'];
-            $_SESSION['nombre'] = $user['nombre'];
-            $_SESSION['cod_centro'] = $user['cod_centro'];
-            $_SESSION['rol'] = $user['rol'];
+            // Regenerar sesión por seguridad
+            session_regenerate_id(true);
 
-            // Redirigir al menú principal
+            // Guardar datos en sesión
+            $_SESSION['user_id']    = $user['id_user'];
+            $_SESSION['email']      = $user['email'];
+            $_SESSION['nombre']     = $user['nombre'];
+            $_SESSION['cod_centro'] = $user['cod_centro'];
+            $_SESSION['rol']        = $user['rol'];
+
+            // Redirigir
             header("Location: menu.php");
             exit();
         } else {
@@ -36,28 +39,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="es">
 <head>
-  <meta charset="utf-8">
-  <title>Login</title>
+    <meta charset="UTF-8">
+    <title>Iniciar sesión</title>
 </head>
 <body>
-  <h1>Iniciar sesión</h1>
-  <?php if ($msg): ?>
-    <p style="color:red;"><?= htmlspecialchars($msg) ?></p>
-  <?php endif; ?>
-  <form method="post">
-    <label>Email:
-      <input type="email" name="email" required>
-    </label><br><br>
-    <label>Contraseña:
-      <input type="password" name="password" required>
-    </label><br><br>
-    <button type="submit">Entrar</button>
-  </form>
+    <h2>Iniciar sesión</h2>
 
-  <p>¿No tienes cuenta? <a href="register.php">Crear usuario</a></p>
+    <?php if (!empty($msg)) : ?>
+        <p style="color:red;"><?= htmlspecialchars($msg) ?></p>
+    <?php endif; ?>
+
+    <form method="POST" action="">
+        <label for="email">Email:</label><br>
+        <input type="email" name="email" id="email" required><br><br>
+
+        <label for="password">Contraseña:</label><br>
+        <input type="password" name="password" id="password" required><br><br>
+
+        <button type="submit">Entrar</button>
+    </form>
+
+    <p>¿No tienes cuenta? <a href="register.php">Crear usuario</a></p>
 </body>
 </html>

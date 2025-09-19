@@ -3,26 +3,26 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-session_start();
 require_once __DIR__ . '/../src/db.php';
 require_once __DIR__ . '/../src/auth.php';
+
 requireAuth();
+requireRole(['Director','Tutor']); // Solo Director o Tutor
 
-// Obtener info del usuario y centro
-$user_id = $_SESSION['user_id'];
-$rol = $_SESSION['rol'] ?? '';
-$cod_centro = $_SESSION['cod_centro'] ?? '';
+$cod_centro = $_SESSION['cod_centro'];
+$user_id    = $_SESSION['user_id'];
+$rol        = $_SESSION['rol'];
+$msg        = "";
 
+// Obtener info del centro
 $stmt = $pdo->prepare("SELECT nombre_centro, tipo_centro, loc FROM ttCentros WHERE cod_centro = ?");
 $stmt->execute([$cod_centro]);
 $centro = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$msg = "";
-
-// Validar si el tutor ya tiene un grupo creado
+// Para Tutores: validar que no tengan grupo creado
 if ($rol === 'Tutor') {
-    $stmt2 = $pdo->prepare("SELECT COUNT(*) FROM TI_Gr1 WHERE cod_centro = ? AND id_user = ?");
-    $stmt2->execute([$cod_centro, $user_id]);
+    $stmt2 = $pdo->prepare("SELECT COUNT(*) FROM TI_Gr1 WHERE id_user = ?");
+    $stmt2->execute([$user_id]);
     $existeGrupo = $stmt2->fetchColumn() > 0;
     if ($existeGrupo) {
         die("Los tutores solo pueden crear un grupo. Ya existe un grupo creado. <a href='menu.php'>Volver al menú</a>");
@@ -40,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $grupos_validos = ['A','B','C','D','E','F','G','H'];
     $alumnos_validos = range(1,33);
 
+    // Validaciones básicas
     if (!$Etapa || !$Grupo || $Curso <= 0 || $listado <= 0) {
         $msg = "Por favor, completa todos los campos correctamente.";
         $error = true;
@@ -54,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = true;
     }
 
-    // Validar Curso según reglas
+    // Validación de Curso según reglas
     if (!$error) {
         $maxCurso = match($Etapa) {
             'Infantil' => 3,
@@ -84,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$cod_centro, $Etapa, $Modalidad, $Curso, $Grupo, $cod_grupo, $listado, $user_id]);
 
             $_SESSION['ultimo_grupo'] = $cod_grupo;
-            $_SESSION['current_group'] = $pdo->lastInsertId();
+            $_SESSION['current_group'] = $cod_grupo; // Guardamos cod_grupo y no lastInsertId
 
             header("Location: menu.php");
             exit();

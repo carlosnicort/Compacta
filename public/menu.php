@@ -27,8 +27,26 @@ if ($cod_grupo) {
 <h2>Menú</h2>
 
 <ul>
-    <?php if($_SESSION['rol'] === 'Director'): ?>
+<?php if($_SESSION['rol'] === 'Director' || $_SESSION['rol'] === 'Tutor'): ?>
+    <?php
+    $puedeCrear = true;
+
+    if ($_SESSION['rol'] === 'Tutor') {
+        // Comprobar si ya tiene grupo creado
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM TI_Gr1 WHERE id_user = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+        $gruposTutor = $stmt->fetchColumn();
+
+        if ($gruposTutor > 0) {
+            $puedeCrear = false;
+        }
+    }
+    ?>
+    <?php if($puedeCrear): ?>
         <li><a href="create_group.php">Crear Grupo</a></li>
+    <?php else: ?>
+        <li>Crear Grupo (ya tienes uno)</li>
+    <?php endif; ?>
     <?php endif; ?>
 
     <li><a href="create_tipo.php">Crear Tipología</a></li>
