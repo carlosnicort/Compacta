@@ -17,6 +17,11 @@
 /.next/
 /out/
 
+# sql
+/backend/vendor/
+/frontend/node_modules/
+/.env
+
 # production
 /build
 
