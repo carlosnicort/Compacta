@@ -1,69 +1,124 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-session_start();
 require_once __DIR__ . '/../src/db.php';
-require_once __DIR__ . '/../src/auth.php'; 
 
-$msg = "";
+$nombre = $apellidos = $email = $cod_centro = $rol = $observaciones = "";
+$error = "";
 
+// Obtener lista de centros para validación
+$centros = $pdo->query("SELECT cod_centro FROM ttCentros")->fetchAll(PDO::FETCH_COLUMN);
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
-    $nombre = trim($_POST['nombre'] ?? '');
-    $rol = trim($_POST['rol'] ?? '');
-    $cod_centro = trim($_POST['cod_centro'] ?? '');
+    $nombre = trim($_POST['nombre']);
+    $apellidos = trim($_POST['apellidos']);
+    $email = trim($_POST['email']);
+    $password = $_POST['password']; // mantenemos el campo
+    $cod_centro = trim($_POST['cod_centro']);
+    $rol = $_POST['rol'];
+    $observaciones = trim($_POST['observaciones']);
 
-    if ($email && $password && $nombre && $rol && $cod_centro) {
-        $result = registerUser($email, $password, $nombre, $rol, $cod_centro);
+    // Validaciones
+    if (!$nombre) $error = "El nombre no puede estar vacío.";
+    elseif (!$apellidos) $error = "Los apellidos no pueden estar vacíos.";
+    elseif (!$password) $error = "La contraseña no puede estar vacía.";
+    elseif (!in_array($cod_centro, $centros)) $error = "CODCENTRO_INVALIDO";
+    elseif (!in_array($rol, ['Tutor','Director'])) $error = "Rol inválido.";
+    elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) $error = "Email inválido.";
 
-        if (isset($result['ok'])) {
-            // ✅ Guardamos sesión al registrarse
-            $_SESSION['user_id'] = $result['id_user'];
+    if (!$error) {
+        // Hashear contraseña
+        $hash = password_hash($password, PASSWORD_DEFAULT);
 
-            header("Location: menu.php");
-            exit();
-        } else {
-            $msg = $result['error'] ?? "Error desconocido.";
-        }
-    } else {
-        $msg = "Todos los campos son obligatorios.";
+        // Insertar registro
+        $stmt = $pdo->prepare("INSERT INTO usuarios 
+            (nombre, apellidos, email, password, cod_centro, rol, observaciones)
+            VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$nombre, $apellidos, $email, $hash, $cod_centro, $rol, $observaciones]);
+
+        echo "<script>alert('Registro completado correctamente.');window.location='index.php';</script>";
+        exit;
     }
 }
+
 ?>
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Registro de usuario</title>
-</head>
-<body>
-  <h1>Crear cuenta</h1>
-  <?php if ($msg): ?>
-    <p style="color:red;"><?= htmlspecialchars($msg) ?></p>
-  <?php endif; ?>
-  <form method="post">
-    <label>Nombre:
-      <input type="text" name="nombre" required>
-    </label><br>
-    <label>Email:
-      <input type="email" name="email" required>
-    </label><br>
-    <label>Password:
-      <input type="password" name="password" required minlength="6">
-    </label><br>
-	<label>Centro:
-      <input type="text" name="cod_centro" required minlength="11">
-    </label><br>
-	<label>Cargo:
-      <input type="text" name="cargo" required minlength="6">
-    </label><br>
 
-    <button type="submit">Registrarse</button>
-  </form>
+<h2>Registro de usuario</h2>
 
-  <p>¿Ya tienes cuenta? <a href="index.php">Inicia sesión</a></p>
-</body>
-</html>
+<form method="post" id="registerForm">
+    <label>Nombre: <input type="text" name="nombre" value="<?= htmlspecialchars($nombre) ?>" required></label><br><br>
+    <label>Apellidos: <input type="text" name="apellidos" value="<?= htmlspecialchars($apellidos) ?>" required></label><br><br>
+    <label>Email: <input type="email" name="email" value="<?= htmlspecialchars($email) ?>" required></label><br><br>
+    <label>Contraseña: <input type="password" name="password" required></label><br><br>
+    <label>Código Centro: <input type="text" id="cod_centro" name="cod_centro" value="<?= htmlspecialchars($cod_centro) ?>" autocomplete="off" required></label>
+    <div id="lista_centros" class="autocomplete-list"></div><br><br>
+
+    <label>Rol:
+        <select name="rol" required>
+            <option value="">Selecciona</option>
+            <option value="Tutor" <?= $rol==='Tutor'?'selected':'' ?>>Tutor</option>
+            <option value="Director" <?= $rol==='Director'?'selected':'' ?>>Director</option>
+        </select>
+    </label><br><br>
+
+    <label>Observaciones:<br>
+        <textarea name="observaciones" rows="4" cols="50"><?= htmlspecialchars($observaciones) ?></textarea>
+    </label><br><br>
+
+    <button type="submit">Registrar</button>
+</form>
+
+<script>
+const input = document.getElementById('cod_centro');
+const lista = document.getElementById('lista_centros');
+const centros = <?= json_encode($centros) ?>;
+
+input.addEventListener('input', async () => {
+    const term = input.value;
+    if (!term) {
+        lista.innerHTML = '';
+        return;
+    }
+
+    const res = await fetch(`get_centros.php?term=${encodeURIComponent(term)}`);
+    const data = await res.json();
+
+    lista.innerHTML = data.map(c => `
+        <div class="item" data-cod="${c.cod_centro}">
+            <strong>${c.cod_centro}</strong> - <small>${c.nombre_centro}</small>
+        </div>
+    `).join('');
+
+    document.querySelectorAll('.item').forEach(el => {
+        el.addEventListener('click', () => {
+            input.value = el.dataset.cod;
+            lista.innerHTML = '';
+        });
+    });
+});
+
+// Validación final antes de enviar formulario
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    if (!centros.includes(input.value)) {
+        e.preventDefault();
+        alert("Si tu centro no se incluye entre las opciones, ponte en contacto con: a@a.a");
+        input.focus();
+    }
+});
+</script>
+
+<style>
+.autocomplete-list {
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    background: white;
+    width: 250px;
+    z-index: 1000;
+}
+.autocomplete-list .item {
+    padding: 5px;
+    cursor: pointer;
+}
+.autocomplete-list .item:hover {
+    background: #eee;
+}
+</style>
