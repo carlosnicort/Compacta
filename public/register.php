@@ -64,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <button type="submit">Registrar</button>
 </form>
+	<a href="index.php">Volver</a>
 
 <script>
 const input = document.getElementById('cod_centro');

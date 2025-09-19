@@ -3,11 +3,17 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+// Sesión y autenticación
 session_start();
 require_once __DIR__ . '/../src/db.php';
 require_once __DIR__ . '/../src/auth.php';
-requireAuth();
+requireAuth();                  // Verifica que el usuario esté logueado
 
+// NUEVAS VALIDACIONES PROFESIONALES
+requireRole(['Director','Tutor']); // Solo ciertos roles pueden crear tipología
+requireGroup($pdo);                // Asegura que haya un grupo válido y autorizado
+
+// Datos básicos
 $cod_centro = $_SESSION['cod_centro'] ?? '';
 $cod_grupo  = $_SESSION['current_group'] ?? null;
 
@@ -85,6 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Generar ID del alumno actual
 $id_alu = $cod_centro . $Curso . $Grupo . $index;
 ?>
+
 
 <!DOCTYPE html>
 <html>
