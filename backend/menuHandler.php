@@ -13,14 +13,14 @@ $puedeCrear = false;
 
 // Comprobar si hay grupo seleccionado
 if ($cod_grupo) {
-    $stmt = $pdo->prepare("SELECT tipo_completado FROM TI_Gr1 WHERE cod_grupo = ?");
+    $stmt = $pdo->prepare("SELECT tipo_completado FROM ti_gr1 WHERE cod_grupo = ?");
     $stmt->execute([$cod_grupo]);
     $grupo = $stmt->fetch(PDO::FETCH_ASSOC);
     $tipo_completado = $grupo ? (bool)$grupo['tipo_completado'] : false;
 }
 
 // Comprobar permisos de creación de grupo
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM TI_Gr1 WHERE id_user = ?");
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM ti_gr1 WHERE id_user = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $countGrupos = $stmt->fetchColumn();
 
@@ -45,9 +45,7 @@ if ($progreso) {
 
 // Construir menú
 $menuItems = [
-    ['label'=>'Crear Grupo', 'url'=>'create_group.php', 'activo'=>$puedeCrear],
-    ['label'=>'Crear Tipología', 'url'=>'create_tipo.php', 'activo'=>($progresoArray['grupo'] ?? 0) === 1],
-    ['label'=>'Ver Tipología', 'url'=>'view_tipo.php', 'activo'=>($progresoArray['tipologia'] ?? 0) === 1],
+    ['label'=>'Crear Grupo', 'url'=>'/grupo/create_group.php', 'activo'=>$puedeCrear],
     ['label'=>'Siguiente: Crear Materias', 'url'=>'create_mat.php', 'activo'=>($progresoArray['tipologia'] ?? 0) === 1],
 ];
 

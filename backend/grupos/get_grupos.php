@@ -1,28 +1,36 @@
 <?php
-session_start();
-require_once __DIR__ . '/../../../config/db/db.php';
-require_once __DIR__ . '/../../../config/auth/auth.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once __DIR__ . '/../../config/db/db.php';
+require_once __DIR__ . '/../../config/auth/auth.php';
 requireAuth();
 
-$user_id = $_SESSION['user_id'];
-$stmt = $pdo->prepare("SELECT cod_centro, rol FROM usuarios WHERE id_user = ?");
-$stmt->execute([$user_id]);
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
-if (!$user) {
-    echo json_encode(['success'=>false,'message'=>'Usuario no encontrado']);
-    exit;
+// Solo GET permitido
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+    http_response_code(405);
+    echo json_encode(['success' => false, 'message' => 'Método no permitido']);
+    exit();
 }
 
-$rol = $user['rol'];
-$cod_centro = $user['cod_centro'];
+$userId = $_SESSION['user_id'];
+$rol    = $_SESSION['rol'];
 
-if ($rol === 'Tutor') {
-    $stmt = $pdo->prepare("SELECT * FROM TI_Gr1 WHERE id_user = ?");
-    $stmt->execute([$user_id]);
-} elseif ($rol === 'Director') {
-    $stmt = $pdo->prepare("SELECT * FROM TI_Gr1 WHERE cod_centro = ?");
-    $stmt->execute([$cod_centro]);
+try {
+    $stmt = $pdo->prepare("SELECT * FROM ti_gr1 WHERE id_user = ?");
+    $stmt->execute([$userId]);
+    $grupos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Para cada grupo, obtenemos los alumnos existentes en la tabla ti_alu1
+    foreach ($grupos as &$g) {
+        $stmt2 = $pdo->prepare("SELECT id_alu, id_user FROM ti_alu1,ti_gr1 WHERE ti_gr1.cod_grupo = ? ORDER BY id_alu");
+        $stmt2->execute([$g['cod_grupo']]);
+        $g['alumnos'] = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    echo json_encode(['success' => true, 'grupos' => $grupos]);
+
+} catch (PDOException $e) {
+    echo json_encode(['success' => false, 'message' => 'Error DB: ' . $e->getMessage()]);
 }
-
-$grupos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-echo json_encode(['success'=>true,'grupos'=>$grupos]);

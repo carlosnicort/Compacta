@@ -1,9 +1,39 @@
 <?php
-session_start();
-require_once __DIR__ . '/../../../config/auth/auth.php'
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once __DIR__ . '/../../config/auth/auth.php';
 
-$id = intval($_GET['id'] ?? 0);
-if ($id <= 0) die("Grupo no especificado.");
+require_once __DIR__ . '/../../config/db/db.php';
+requireAuth();
+
+
+$userId = $_SESSION['user_id'];
+$rol = $_SESSION['rol'];
+
+// Obtener id del grupo desde GET
+$grupo_id = $_GET['id'] ?? null;
+if (!$grupo_id) {
+    die("Grupo no especificado");
+}
+
+// Verificar permisos
+$stmt = $pdo->prepare("SELECT id_user FROM ti_gr1 WHERE id = ?");
+$stmt->execute([$grupo_id]);
+$grupo = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$grupo) {
+    die("Grupo no encontrado");
+}
+
+// Reglas de permisos
+if ($rol === 'Tutor' && $grupo['id_user'] != $userId) {
+    die("No tienes permiso para editar este grupo");
+}
+
+// Para director no hace falta validar, pero podrías agregar límites adicionales si quieres
+
+// Aquí sigue el resto del código para editar
 ?>
 
 <!DOCTYPE html>
@@ -39,12 +69,12 @@ if ($id <= 0) die("Grupo no especificado.");
     <button type="button" onclick="window.location='ver_group.php'">Volver sin guardar</button>
 </form>
 
-<p><a href="menu.php">Volver al Menú</a></p>
+<p><a href="../menu.php">Volver al Menú</a></p>
 
 <script>
 // Cargar datos del grupo
 async function cargarGrupo() {
-    const res = await fetch('../backend/edit_group.php?id=<?= $id ?>');
+    const res = await fetch('../../backend/grupos/edit_group_handler.php?id=<?= $id ?>');
     const data = await res.json();
     if (data.success) {
         const g = data.grupo;

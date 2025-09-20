@@ -9,5 +9,5 @@ setcookie(session_name(), '', time() - 3600, '/');
 session_destroy();
 
 // Redirigir al login
-header("Location: index.php");
+header("Location: login.php");
 exit();
