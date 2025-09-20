@@ -1,8 +1,10 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 if (isset($_SESSION['user_id'])) {
     // Redirigir si ya está logueado
-    header("Location: /frontend/menu.php");
+    header("Location: ../frontend/menu.php");
     exit();
 }
 ?>
@@ -47,7 +49,7 @@ form.addEventListener('submit', async (e) => {
     const data = Object.fromEntries(formData.entries());
 
     try {
-        const res = await fetch('/api/login.php', {
+			const res = await fetch('./api/login.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
@@ -57,7 +59,7 @@ form.addEventListener('submit', async (e) => {
 
         if (result.success) {
             form.reset();
-            window.location.href = '/frontend/menu.php';
+			window.location.href = '../frontend/menu.php';
         } else {
             msgDiv.textContent = result.message;
         }
@@ -67,7 +69,7 @@ form.addEventListener('submit', async (e) => {
 });
 
 registerBtn.addEventListener('click', () => {
-    window.location.href = '/frontend/pages/register.php';
+    window.location.href = '../frontend/pages/register.php';
 });
 </script>
 </body>

@@ -1,16 +1,39 @@
 <?php
 session_start();
+require __DIR__ . '/../config/db/db.php'; // Conexión PDO
+
+// 1️⃣ Verificar sesión
 if (!isset($_SESSION['user_id'])) {
     header("Location: /public/login.php");
     exit();
 }
 
-$rol = $_SESSION['rol'];
+$userId = $_SESSION['user_id'];
+$rol    = $_SESSION['rol'];
+$nombre = $_SESSION['nombre'] ?? 'Usuario';
+
+// 2️⃣ Contar cuántos grupos ha creado el usuario
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM ti_gr1 WHERE id_user = ?");
+$stmt->execute([$userId]);
+$numGrupos = (int) $stmt->fetchColumn();
+
+// 3️⃣ Definir límites por rol
+$maxGrupos = ($rol === 'Director') ? 5 : 1;
+
+// 4️⃣ Calcular permisos y progreso
+$puedeCrearGrupo = $numGrupos < $maxGrupos;
+$progreso = 0;
+if (!$puedeCrearGrupo) $progreso++;
+
+// Para los siguientes pasos se podría agregar reglas más complejas
+$puedeCrearTipo      = $progreso >= 1;
+$puedeCrearMaterias  = $progreso >= 2;
+
+// 5️⃣ Construir menú dinámico
 $menu = [
-    ['label' => 'Crear Grupo', 'url' => 'create_group.php', 'activo' => true],
-    ['label' => 'Crear Tipología', 'url' => 'create_tipo.php', 'activo' => false],
-    ['label' => 'Ver Tipología', 'url' => 'view_tipo.php', 'activo' => false],
-    ['label' => 'Siguiente: Crear Materias', 'url' => 'create_mat.php', 'activo' => false]
+    ['label' => 'Crear Grupo', 'url' => 'grupo/create_group.php', 'activo' => $puedeCrearGrupo],
+    ['label' => 'Ver Grupo', 'url' => 'grupo/ver_group.php', 'activo' => true],
+    ['label' => 'Siguiente: Crear Materias', 'url' => 'create_mat.php', 'activo' => $puedeCrearMaterias],
 ];
 ?>
 <!DOCTYPE html>
@@ -23,22 +46,25 @@ body { font-family: Arial, sans-serif; }
 ul { list-style-type: none; padding: 0; }
 li { margin: 10px 0; }
 a { text-decoration: none; color: blue; }
-a.bloqueado { color: gray; pointer-events: none; }
+span.bloqueado { color: gray; cursor: not-allowed; }
 </style>
 </head>
 <body>
-<h2>Menú</h2>
+<h2>Bienvenido, <?= htmlspecialchars($nombre) ?></h2>
+
+<h3>Menú</h3>
 <ul>
 <?php foreach ($menu as $item): ?>
     <li>
         <?php if ($item['activo']): ?>
             <a href="<?= $item['url'] ?>"><?= $item['label'] ?></a>
         <?php else: ?>
-            <a class="bloqueado"><?= $item['label'] ?> (bloqueado)</a>
+            <span class="bloqueado"><?= $item['label'] ?> (bloqueado)</span>
         <?php endif; ?>
     </li>
 <?php endforeach; ?>
 </ul>
-<p><a href="/backend/logout.php">Cerrar sesión</a></p>
+
+<p><a href="../public/logout.php">Cerrar sesión</a></p>
 </body>
 </html>

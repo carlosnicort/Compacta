@@ -3,17 +3,22 @@
 require_once __DIR__.'/../../config/db/db.php';
 require_once __DIR__.'/../../config/auth/auth.php';
 
-requireAuth();
-requireRole(['Director','Tutor']);
-requireGroup($pdo);
+requireAuth(); // Verifica que el usuario está logueado
 
 header('Content-Type: application/json');
 
+// Validar rol directamente
+$rol = $_SESSION['rol'] ?? '';
+if (!in_array($rol, ['Director','Tutor'])) {
+    echo json_encode(['success'=>false,'message'=>'Rol no autorizado']);
+    exit();
+}
+
+// Validar grupo activo
 $cod_centro = $_SESSION['cod_centro'] ?? '';
 $cod_grupo  = $_SESSION['current_group'] ?? null;
 
 if (!$cod_grupo) {
-    http_response_code(400);
     echo json_encode([
         'success' => false,
         'message' => 'No se ha seleccionado ningún grupo.'
@@ -25,8 +30,8 @@ if (!$cod_grupo) {
 $stmt = $pdo->prepare("SELECT * FROM TI_Gr1 WHERE cod_grupo = ? AND cod_centro = ?");
 $stmt->execute([$cod_grupo, $cod_centro]);
 $grupo = $stmt->fetch(PDO::FETCH_ASSOC);
+
 if (!$grupo) {
-    http_response_code(404);
     echo json_encode(['success'=>false,'message'=>'Grupo no encontrado']);
     exit();
 }
@@ -78,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    $id_alu = $cod_centro . $Curso . $Grupo . $index;
+    $id_alu = $cod_centro . $Etapa . $Curso . $Grupo . $index;
     $stmt = $pdo->prepare("
         INSERT INTO ti_alu1
         (id_alu, cod_centro, cod_grupo, Tipo1, Informe, Perfil1, ExtraPerfil1, Perfil2, ExtraPerfil2, OtrasObservaciones)
