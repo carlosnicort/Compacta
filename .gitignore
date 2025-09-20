@@ -3,6 +3,7 @@
 # dependencies
 /node_modules
 /.pnp
+*.log
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -13,11 +14,18 @@
 # testing
 /coverage
 
+# Archivos sensibles
+config/db/db.php
+config/auth/auth.php
+config/auth/*.key
+.env
+
 # next.js
 /.next/
 /out/
-
-# sql
+# Backups / dumps locales
+sql/backup_*.sql
+*.sql~
 /backend/vendor/
 /frontend/node_modules/
 /.env
