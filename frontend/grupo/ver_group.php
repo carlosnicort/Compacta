@@ -71,7 +71,7 @@ async function cargarGrupos() {
         return;
     }
 
-    if (data.grupos.length === 0) {
+    if (!Array.isArray(data.grupos) || data.grupos.length === 0) {
         cuerpo.innerHTML = '<tr><td colspan="7">No hay grupos disponibles</td></tr>';
         return;
     }
@@ -92,24 +92,53 @@ async function cargarGrupos() {
         `;
         cuerpo.appendChild(trGrupo);
 
-        // Filas de alumnos según el listado
-       for (let i = 1; i <= g.listado; i++) {
-    const trAlumno = document.createElement('tr');
-    trAlumno.classList.add('subfila');
-    trAlumno.innerHTML = `
-        <td colspan="5">&nbsp;&nbsp;&nbsp;Alumno ${i}</td>
-        <td>ID User: ${g.id_user}</td>
-        <td>
-            <a href="../../frontend/tipo/create_tipo.php?id_alu=${encodeURIComponent(g.cod_grupo)}_${i}">Crear Tipo</a>
-        </td>
-    `;
-    cuerpo.appendChild(trAlumno);
-}
+        // Filas de alumnos según el array g.alumnos
+        if (Array.isArray(g.alumnos) && g.alumnos.length > 0) {
+            for (const alumno of g.alumnos) {
+                // Número de alumno: último dígito del id_alu
+                const matches = alumno.id_alu.match(/_(\d+)$/);
+                const numAlumno = matches ? matches[1] : 1;
+
+                const trAlumno = document.createElement('tr');
+                trAlumno.classList.add('subfila');
+                trAlumno.innerHTML = `
+                    <td colspan="5">&nbsp;&nbsp;&nbsp;Alumno ${numAlumno}</td>
+                    <td>ID User: ${alumno.id_user}</td>
+                    <td>
+                        <a href="#" onclick="setCurrentAlumno('${alumno.id_alu}','${g.cod_grupo}')">
+                            Crear Tipo
+                        </a>
+                    </td>
+                `;
+                cuerpo.appendChild(trAlumno);
+            }
+        }
     }
 }
 
+// Guardar en sesión y redirigir
+async function setCurrentAlumno(idAlu, codGrupo) {
+    const resp = await fetch('../../backend/grupos/set_current.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_alu: idAlu, cod_grupo: codGrupo }),
+        credentials: 'same-origin'
+    });
+
+    const data = await resp.json();
+    if (data.success) {
+        window.location.href = "../../frontend/tipo/create_tipo.php";
+    } else {
+        alert("Error al fijar el alumno: " + data.message);
+    }
+}
+
+// Ejecutar la carga al abrir la página
 cargarGrupos();
 </script>
+
+
+
 
 </body>
 </html>

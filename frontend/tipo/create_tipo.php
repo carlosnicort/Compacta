@@ -1,9 +1,16 @@
 <?php
 // create_tipo.php
 session_start();
+
 $cod_centro = $_SESSION['cod_centro'] ?? '';
+$listado    = $_SESSION['listado'] ?? 1; 
 $cod_grupo  = $_SESSION['current_group'] ?? '';
-$listado    = $_SESSION['listado'] ?? 1; // Número de alumnos del grupo
+$id_alu     = $_SESSION['current_id_alu'] ?? '';
+
+// Validación
+if (!$id_alu || !$cod_grupo) {
+    die("Error: faltan datos de sesión (id_alu o cod_grupo)");
+}
 
 // Extras disponibles
 $extras = [
@@ -19,7 +26,7 @@ $extras = [
 <title>Crear Tipología</title>
 </head>
 <body>
-<h2>Crear Tipología - Alumno <span id="index">1</span> (ID: <span id="idAlu"></span>)</h2>
+<h2>Crear Tipología - Alumno (ID: <?= htmlspecialchars($id_alu) ?>)</h2>
 
 <h3>Centro y Grupo</h3>
 <p><strong>Código Centro:</strong> <?= htmlspecialchars($cod_centro) ?></p>
@@ -67,106 +74,117 @@ $extras = [
 <p><a href="../menu.php">Volver al Menú</a></p>
 
 <script>
-const extras = <?= json_encode($extras) ?>;
-let index = 1;
-const listado = <?= (int)$listado ?>;
-const codCentro = '<?= $cod_centro ?>';
-const codGrupo = '<?= $cod_grupo ?>';
+document.addEventListener('DOMContentLoaded', () => {
+    const extras = <?= json_encode($extras) ?>;
+    let index = 1;
+    const listado = <?= (int)$listado ?>;
+    const codCentro = '<?= $cod_centro ?>';
+    const codGrupo = '<?= $cod_grupo ?>';
+    const idAlu = '<?= $id_alu ?>';
 
-function actualizarIdAlu() {
-    document.getElementById('index').textContent = index;
-    document.getElementById('idAlu').textContent = codCentro + codGrupo + index;
-}
-
-actualizarIdAlu();
-
-// Funciones de habilitación de select
-function togglePerfil1() {
-    const tipo1 = document.getElementById('Tipo1').checked;
+    const tipo1 = document.getElementById('Tipo1');
     const perfil1 = document.getElementById('Perfil1');
-    perfil1.disabled = !tipo1;
-    if (!tipo1) { perfil1.value=''; toggleExtra1(); togglePerfil2(); }
-}
-
-function toggleExtra1() {
-    const perfil1 = document.getElementById('Perfil1').value;
     const extra1 = document.getElementById('ExtraPerfil1');
-    if (perfil1 && extras[perfil1]) {
-        extra1.style.display='inline';
-        extra1.innerHTML='';
-        extras[perfil1].forEach(opt => extra1.add(new Option(opt,opt)));
-    } else {
-        extra1.style.display='none';
-        extra1.innerHTML='<option value="">Selecciona Perfil1 primero</option>';
-    }
-}
-
-function togglePerfil2() {
-    const perfil1 = document.getElementById('Perfil1').value;
     const perfil2 = document.getElementById('Perfil2');
-    perfil2.disabled = !perfil1;
-    if (!perfil1) { perfil2.value=''; toggleExtra2(); }
-}
-
-function toggleExtra2() {
-    const perfil2 = document.getElementById('Perfil2').value;
     const extra2 = document.getElementById('ExtraPerfil2');
-    if (perfil2 && extras[perfil2]) {
-        extra2.style.display='inline';
-        extra2.innerHTML='';
-        extras[perfil2].forEach(opt => extra2.add(new Option(opt,opt)));
-    } else {
-        extra2.style.display='none';
-        extra2.innerHTML='<option value="">Selecciona Perfil2 primero</option>';
-    }
-}
+    const mensaje = document.getElementById('mensaje');
+    const form = document.getElementById('formTipo');
 
-document.getElementById('Tipo1').addEventListener('click', togglePerfil1);
-document.getElementById('Perfil1').addEventListener('change', () => { toggleExtra1(); togglePerfil2(); });
-document.getElementById('Perfil2').addEventListener('change', toggleExtra2);
-
-document.getElementById('formTipo').addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const formData = {
-        Tipo1: document.getElementById('Tipo1').checked,
-        Informe: document.getElementById('Informe').checked,
-        Perfil1: document.getElementById('Perfil1').value,
-        ExtraPerfil1: document.getElementById('ExtraPerfil1').value,
-        Perfil2: document.getElementById('Perfil2').value,
-        ExtraPerfil2: document.getElementById('ExtraPerfil2').value,
-        OtrasObservaciones: document.getElementById('OtrasObservaciones').value
-    };
-
-    const resp = await fetch('../../backend/tipo/createTipoHandler.php', {
-        method: 'POST',
-        body: JSON.stringify(formData),
-        headers: {'Content-Type':'application/json'},
-        credentials: 'same-origin'
-    });
-
-    const data = await resp.json();
-    const msg = document.getElementById('mensaje');
-
-    if(data.success){
-        msg.style.color='green';
-        msg.textContent = data.message;
-        index = data.nextIndex;
-        if(index > listado){
-            alert("Todos los alumnos han sido registrados.");
-            window.location='../menu.php';
-        } else {
-            actualizarIdAlu();
-            document.getElementById('formTipo').reset();
-            togglePerfil1(); toggleExtra1(); togglePerfil2(); toggleExtra2();
+    function togglePerfil1() {
+        perfil1.disabled = !tipo1.checked;
+        if (!tipo1.checked) {
+            perfil1.value = '';
+            toggleExtra1();
+            togglePerfil2();
         }
-    } else {
-        msg.style.color='red';
-        msg.textContent = data.message;
-        alert(data.message);
     }
-});
 
+    function toggleExtra1() {
+        const val1 = perfil1.value;
+        extra1.innerHTML = '';
+        if (val1 && extras[val1]) {
+            extra1.style.display = 'inline';
+            extras[val1].forEach(opt => extra1.add(new Option(opt,opt)));
+        } else {
+            extra1.style.display = 'none';
+            extra1.innerHTML = '<option value="">Selecciona Perfil1 primero</option>';
+        }
+    }
+
+    function togglePerfil2() {
+        const val1 = perfil1.value;
+        perfil2.disabled = !val1;
+        if (!val1) {
+            perfil2.value = '';
+            toggleExtra2();
+        }
+    }
+
+    function toggleExtra2() {
+        const val2 = perfil2.value;
+        extra2.innerHTML = '';
+        if (val2 && extras[val2]) {
+            extra2.style.display = 'inline';
+            extras[val2].forEach(opt => extra2.add(new Option(opt,opt)));
+        } else {
+            extra2.style.display = 'none';
+            extra2.innerHTML = '<option value="">Selecciona Perfil2 primero</option>';
+        }
+    }
+
+    tipo1.addEventListener('click', togglePerfil1);
+    perfil1.addEventListener('change', () => { toggleExtra1(); togglePerfil2(); });
+    perfil2.addEventListener('change', toggleExtra2);
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = {
+            id_alu: idAlu,
+            cod_grupo: codGrupo,
+            Tipo1: tipo1.checked,
+            Informe: document.getElementById('Informe').checked,
+            Perfil1: perfil1.value,
+            ExtraPerfil1: extra1.value,
+            Perfil2: perfil2.value,
+            ExtraPerfil2: extra2.value,
+            OtrasObservaciones: document.getElementById('OtrasObservaciones').value
+        };
+
+        try {
+            const resp = await fetch('../../backend/tipo/createTipoHandler.php', {
+                method: 'POST',
+                body: JSON.stringify(formData),
+                headers: {'Content-Type':'application/json'},
+                credentials: 'same-origin'
+            });
+            const data = await resp.json();
+
+            if (data.success) {
+                mensaje.style.color = 'green';
+                mensaje.textContent = data.message;
+                index = data.nextIndex;
+                if (index > listado) {
+                    alert("Todos los alumnos han sido registrados.");
+                    window.location='../menu.php';
+                } else {
+                    form.reset();
+                    togglePerfil1(); toggleExtra1(); togglePerfil2(); toggleExtra2();
+                }
+            } else {
+                mensaje.style.color = 'red';
+                mensaje.textContent = data.message;
+                alert(data.message);
+            }
+        } catch (err) {
+            mensaje.style.color = 'red';
+            mensaje.textContent = "Error de conexión o JSON inválido";
+            console.error(err);
+        }
+    });
+});
 </script>
+
+
 </body>
 </html>

@@ -15,18 +15,29 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 }
 
 $userId = $_SESSION['user_id'];
-$rol    = $_SESSION['rol'];
 
 try {
+    // Traer todos los grupos del usuario
     $stmt = $pdo->prepare("SELECT * FROM ti_gr1 WHERE id_user = ?");
     $stmt->execute([$userId]);
     $grupos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Para cada grupo, obtenemos los alumnos existentes en la tabla ti_alu1
+    // Para cada grupo, traer los alumnos de ti_alu1
     foreach ($grupos as &$g) {
-        $stmt2 = $pdo->prepare("SELECT id_alu, id_user FROM ti_alu1,ti_gr1 WHERE ti_gr1.cod_grupo = ? ORDER BY id_alu");
-        $stmt2->execute([$g['cod_grupo']]);
-        $g['alumnos'] = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+        $stmtAlu = $pdo->prepare("SELECT id_alu FROM ti_alu1 WHERE cod_grupo = ? ORDER BY id_alu");
+        $stmtAlu->execute([$g['cod_grupo']]);
+        $alumnosRaw = $stmtAlu->fetchAll(PDO::FETCH_ASSOC);
+
+       $alumnos = $stmtAlu->fetchAll(PDO::FETCH_ASSOC);
+foreach ($alumnos as &$a) {
+    // Comprobar si ya existe tipo para este alumno
+    $stmtTipo = $pdo->prepare("SELECT 1 FROM ti_alu1 WHERE id_alu=?");
+    $stmtTipo->execute([$a['id_alu']]);
+    $a['tipo_creado'] = $stmtTipo->fetchColumn() ? true : false;
+}
+$g['alumnos'] = $alumnos;
+
+        $g['alumnos'] = $alumnos;
     }
 
     echo json_encode(['success' => true, 'grupos' => $grupos]);
