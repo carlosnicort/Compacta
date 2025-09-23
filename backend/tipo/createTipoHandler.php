@@ -14,14 +14,9 @@ if (!in_array($rol, ['Director','Tutor'])) {
     exit();
 }
 
-// Capturar JSON entrante
-$input = json_decode(file_get_contents('php://input'), true);
-if (!$input) $input = [];
-
 // Grupo y centro de sesión
 $cod_centro = $_SESSION['cod_centro'] ?? '';
-$cod_grupo  = $_SESSION['current_group'] ?? '';
-$listado    = $_SESSION['listado'] ?? 1;
+$cod_grupo  = $_SESSION['current_group'] ?? null;
 
 if (!$cod_grupo) {
     echo json_encode(['success'=>false,'message'=>'No se ha seleccionado ningún grupo.']);
@@ -41,9 +36,10 @@ if (!$grupo) {
 $Curso = $grupo['Curso'];
 $GrupoLetra = $grupo['Grupo'];
 $Etapa = $grupo['Etapa'];
+$listado = $grupo['listado'];
 
-// Índice actual
-$index = max(1, intval($input['index'] ?? 1));
+// Índice actual (si viene por POST o GET)
+$index = max(1, intval($_POST['index'] ?? $_GET['index'] ?? 1));
 
 // Comprobar si ya se completaron todos los alumnos
 if ($index > $listado) {
@@ -60,15 +56,17 @@ if ($index > $listado) {
 
 // Procesar formulario POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $Tipo1 = isset($input['Tipo1']) ? 1 : 0;
-    $Informe = isset($input['Informe']) ? 1 : 0;
-    $Perfil1 = trim($input['Perfil1'] ?? '');
-    $ExtraPerfil1 = trim($input['ExtraPerfil1'] ?? '');
-    $Perfil2 = trim($input['Perfil2'] ?? '');
-    $ExtraPerfil2 = trim($input['ExtraPerfil2'] ?? '');
-    $OtrasObservaciones = trim($input['OtrasObservaciones'] ?? '');
+    $data = json_decode(file_get_contents("php://input"), true) ?? [];
 
-    $error = '';
+    $Tipo1 = isset($data['Tipo1']) ? 1 : 0;
+    $Informe = isset($data['Informe']) ? 1 : 0;
+    $Perfil1 = trim($data['Perfil1'] ?? '');
+    $ExtraPerfil1 = trim($data['ExtraPerfil1'] ?? '');
+    $Perfil2 = trim($data['Perfil2'] ?? '');
+    $ExtraPerfil2 = trim($data['ExtraPerfil2'] ?? '');
+    $OtrasObservaciones = trim($data['OtrasObservaciones'] ?? '');
+
+    $error = "";
     if ($Tipo1 && !$Perfil1) $error = "Debes seleccionar Perfil1";
     elseif ($Perfil1 && !$ExtraPerfil1) $error = "Debes seleccionar ExtraPerfil1";
     elseif ($Perfil1 && !$Perfil2) $error = "Debes seleccionar Perfil2";
@@ -81,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Generar id_alu
-    $id_alu = $cod_centro . $cod_grupo . $index;
+    $id_alu = $cod_centro . $Etapa . $Curso . $GrupoLetra . $index;
 
     $stmt = $pdo->prepare("
         INSERT INTO ti_alu1

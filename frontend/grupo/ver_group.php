@@ -1,7 +1,5 @@
 <?php 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+if (session_status() === PHP_SESSION_NONE) session_start();
 require_once __DIR__ . '/../../config/db/db.php';
 require_once __DIR__ . '/../../config/auth/auth.php';
 requireAuth();
@@ -10,7 +8,6 @@ $rol = $_SESSION['rol'];
 $stmt = $pdo->prepare("SELECT COUNT(*) FROM ti_gr1 WHERE id_user = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $numGrupos = (int) $stmt->fetchColumn();
-
 $maxGrupos = ($rol === 'Director') ? 5 : 1;
 $puedeCrear = $numGrupos < $maxGrupos;
 ?>
@@ -62,9 +59,10 @@ async function cargarGrupos() {
         method: 'GET',
         credentials: 'same-origin'
     });
-    const data = await res.json();
     const cuerpo = document.getElementById('cuerpoTabla');
     cuerpo.innerHTML = '';
+
+    const data = await res.json();
 
     if (!data.success) {
         document.getElementById('mensaje').textContent = data.message;
@@ -86,37 +84,39 @@ async function cargarGrupos() {
             <td>${g.Curso}</td>
             <td>${g.Grupo}</td>
             <td>${g.listado}</td>
-            <td>
-                <a href="edit_group.php?id=${g.id}">Editar Grupo</a>
-            </td>
+            <td><a href="edit_group.php?id=${g.id}">Editar Grupo</a></td>
         `;
         cuerpo.appendChild(trGrupo);
 
-        // Filas de alumnos según el array g.alumnos
-        if (Array.isArray(g.alumnos) && g.alumnos.length > 0) {
-            for (const alumno of g.alumnos) {
-                // Número de alumno: último dígito del id_alu
-                const matches = alumno.id_alu.match(/_(\d+)$/);
-                const numAlumno = matches ? matches[1] : 1;
+        // Crear alumnos según el "listado"
+        for (let i = 1; i <= g.listado; i++) {
+            const alumno = g.alumnos[i-1] || {}; // Si no existe registro previo
+            const idAlu = alumno.id_alu || `${g.cod_grupo}${i}`;
+            const tipo_creado = !!alumno.tipo_creado; // fuerza booleano
 
-                const trAlumno = document.createElement('tr');
-                trAlumno.classList.add('subfila');
-                trAlumno.innerHTML = `
-                    <td colspan="5">&nbsp;&nbsp;&nbsp;Alumno ${numAlumno}</td>
-                    <td>ID User: ${alumno.id_user}</td>
-                    <td>
-                        <a href="#" onclick="setCurrentAlumno('${alumno.id_alu}','${g.cod_grupo}')">
-                            Crear Tipo
-                        </a>
-                    </td>
-                `;
-                cuerpo.appendChild(trAlumno);
-            }
+            const trAlumno = document.createElement('tr');
+            trAlumno.classList.add('subfila');
+
+            const linkTipo = tipo_creado ? 'Ver/Editar Perfil' : 'Crear Tipo';
+            const asignar = tipo_creado
+                ? ` | <a href="#" onclick="asignarMaterias('${encodeURIComponent(idAlu)}','${encodeURIComponent(g.cod_grupo)}')">Asignar Materias</a>`
+                : '';
+
+            trAlumno.innerHTML = `
+                <td colspan="5">&nbsp;&nbsp;&nbsp;Alumno ${i}</td>
+                <td>ID User: ${alumno.id_user || ''}</td>
+                <td>
+                    <a href="#" onclick="setCurrentAlumno('${encodeURIComponent(idAlu)}','${encodeURIComponent(g.cod_grupo)}')">
+                        ${linkTipo}
+                    </a>
+                    ${asignar}
+                </td>
+            `;
+            cuerpo.appendChild(trAlumno);
         }
     }
 }
 
-// Guardar en sesión y redirigir
 async function setCurrentAlumno(idAlu, codGrupo) {
     const resp = await fetch('../../backend/grupos/set_current.php', {
         method: 'POST',
@@ -124,7 +124,6 @@ async function setCurrentAlumno(idAlu, codGrupo) {
         body: JSON.stringify({ id_alu: idAlu, cod_grupo: codGrupo }),
         credentials: 'same-origin'
     });
-
     const data = await resp.json();
     if (data.success) {
         window.location.href = "../../frontend/tipo/create_tipo.php";
@@ -133,11 +132,23 @@ async function setCurrentAlumno(idAlu, codGrupo) {
     }
 }
 
-// Ejecutar la carga al abrir la página
+async function asignarMaterias(idAlu, codGrupo) {
+    const resp = await fetch('../../backend/grupos/set_current.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_alu: idAlu, cod_grupo: codGrupo }),
+        credentials: 'same-origin'
+    });
+    const data = await resp.json();
+    if (data.success) {
+        window.location.href = "../../frontend/materias/asignar_materias.php";
+    } else {
+        alert("Error al fijar el alumno para materias: " + data.message);
+    }
+}
+
 cargarGrupos();
 </script>
-
-
 
 
 </body>
