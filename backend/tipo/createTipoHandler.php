@@ -1,11 +1,22 @@
 <?php
-session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+session_start(); // <--- imprescindible al principio
+
 header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__.'/../../config/db/db.php';
 require_once __DIR__.'/../../config/auth/auth.php';
 
-requireAuth(); // Verifica que el usuario está logueado
+requireAuth(); // verifica que usuario está logueado
+
+// Chequeo extra de usuario
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(['success'=>false,'message'=>'Usuario no logueado']);
+    exit();
+}
 
 // Validar rol
 $rol = $_SESSION['rol'] ?? '';
@@ -23,40 +34,15 @@ if (!$cod_grupo) {
     exit();
 }
 
-// Obtener info del grupo
-$stmt = $pdo->prepare("SELECT * FROM TI_Gr1 WHERE cod_grupo = ? AND cod_centro = ?");
-$stmt->execute([$cod_grupo, $cod_centro]);
-$grupo = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$grupo) {
-    echo json_encode(['success'=>false,'message'=>'Grupo no encontrado']);
-    exit();
-}
-
-$Curso = $grupo['Curso'];
-$GrupoLetra = $grupo['Grupo'];
-$Etapa = $grupo['Etapa'];
-$listado = $grupo['listado'];
-
-// Índice actual (si viene por POST o GET)
-$index = max(1, intval($_POST['index'] ?? $_GET['index'] ?? 1));
-
-// Comprobar si ya se completaron todos los alumnos
-if ($index > $listado) {
-    $stmt = $pdo->prepare("UPDATE TI_Gr1 SET tipo_completado = 1 WHERE cod_grupo = ?");
-    $stmt->execute([$cod_grupo]);
-
-    echo json_encode([
-        'success' => true,
-        'completed' => true,
-        'message' => 'Todos los alumnos han sido registrados.'
-    ]);
-    exit();
-}
-
 // Procesar formulario POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents("php://input"), true) ?? [];
+
+    $id_alu = $data['id_alu'] ?? '';
+    if (!$id_alu) {
+        echo json_encode(['success'=>false,'message'=>'Falta id_alu en la petición']);
+        exit();
+    }
 
     $Tipo1 = isset($data['Tipo1']) ? 1 : 0;
     $Informe = isset($data['Informe']) ? 1 : 0;
@@ -66,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ExtraPerfil2 = trim($data['ExtraPerfil2'] ?? '');
     $OtrasObservaciones = trim($data['OtrasObservaciones'] ?? '');
 
+    // Validaciones mínimas
     $error = "";
     if ($Tipo1 && !$Perfil1) $error = "Debes seleccionar Perfil1";
     elseif ($Perfil1 && !$ExtraPerfil1) $error = "Debes seleccionar ExtraPerfil1";
@@ -78,23 +65,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // Generar id_alu
-    $id_alu = $cod_centro . $Etapa . $Curso . $GrupoLetra . $index;
-
+    // Insertar o actualizar tipología
     $stmt = $pdo->prepare("
         INSERT INTO ti_alu1
-        (id_alu, cod_centro, cod_grupo, Tipo1, Informe, Perfil1, ExtraPerfil1, Perfil2, ExtraPerfil2, OtrasObservaciones)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (id_alu, cod_centro, cod_grupo, Tipo1, Informe, Perfil1, ExtraPerfil1, Perfil2, ExtraPerfil2, OtrasObservaciones, id_user)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+            Tipo1 = VALUES(Tipo1),
+            Informe = VALUES(Informe),
+            Perfil1 = VALUES(Perfil1),
+            ExtraPerfil1 = VALUES(ExtraPerfil1),
+            Perfil2 = VALUES(Perfil2),
+            ExtraPerfil2 = VALUES(ExtraPerfil2),
+            OtrasObservaciones = VALUES(OtrasObservaciones)
     ");
     $stmt->execute([
         $id_alu, $cod_centro, $cod_grupo,
-        $Tipo1, $Informe, $Perfil1, $ExtraPerfil1, $Perfil2, $ExtraPerfil2, $OtrasObservaciones
+        $Tipo1, $Informe, $Perfil1, $ExtraPerfil1, $Perfil2, $ExtraPerfil2, $OtrasObservaciones,
+        $_SESSION['user_id'] // quien crea el registro
     ]);
 
     echo json_encode([
         'success' => true,
-        'message' => 'Alumno registrado correctamente',
-        'nextIndex' => $index + 1
+        'message' => 'Tipología registrada correctamente',
+        'nextIndex' => ($data['nextIndex'] ?? null)
     ]);
     exit();
 }

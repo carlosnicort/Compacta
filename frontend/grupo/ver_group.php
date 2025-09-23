@@ -38,7 +38,7 @@ $puedeCrear = $numGrupos < $maxGrupos;
         <th>Curso</th>
         <th>Grupo</th>
         <th>Listado</th>
-        <th>Alumno / Acciones</th>
+        <th>Acciones</th>
     </tr>
     </thead>
     <tbody id="cuerpoTabla"></tbody>
@@ -74,6 +74,9 @@ async function cargarGrupos() {
         return;
     }
 
+    // ID de usuario actual
+    const idUser = '<?= $_SESSION['user_id'] ?>';
+
     for (const g of data.grupos) {
         // Fila del grupo
         const trGrupo = document.createElement('tr');
@@ -88,28 +91,32 @@ async function cargarGrupos() {
         `;
         cuerpo.appendChild(trGrupo);
 
-        // Crear alumnos según el "listado"
+        // Filas de alumnos
         for (let i = 1; i <= g.listado; i++) {
-            const alumno = g.alumnos[i-1] || {}; // Si no existe registro previo
-            const idAlu = alumno.id_alu || `${g.cod_grupo}${i}`;
-            const tipo_creado = !!alumno.tipo_creado; // fuerza booleano
+            const alumno = g.alumnos && g.alumnos[i-1] 
+                ? g.alumnos[i-1]
+                : {
+                    id_alu: `${g.cod_centro}${g.Etapa}${g.Curso}${g.Grupo}${i}`,
+                    id_user: idUser,
+                    tipo_creado: false
+                };
 
             const trAlumno = document.createElement('tr');
             trAlumno.classList.add('subfila');
 
-            const linkTipo = tipo_creado ? 'Ver/Editar Perfil' : 'Crear Tipo';
-            const asignar = tipo_creado
-                ? ` | <a href="#" onclick="asignarMaterias('${encodeURIComponent(idAlu)}','${encodeURIComponent(g.cod_grupo)}')">Asignar Materias</a>`
-                : '';
+            const linkTipo = alumno.tipo_creado ? 'Ver/Editar Perfil' : 'Crear Tipo';
 
             trAlumno.innerHTML = `
                 <td colspan="5">&nbsp;&nbsp;&nbsp;Alumno ${i}</td>
                 <td>ID User: ${alumno.id_user || ''}</td>
                 <td>
-                    <a href="#" onclick="setCurrentAlumno('${encodeURIComponent(idAlu)}','${encodeURIComponent(g.cod_grupo)}')">
+                    <a href="#" onclick="setCurrentAlumno('${encodeURIComponent(alumno.id_alu)}','${encodeURIComponent(g.cod_grupo)}','tipo')">
                         ${linkTipo}
                     </a>
-                    ${asignar}
+                    | 
+                    <a href="#" onclick="setCurrentAlumno('${encodeURIComponent(alumno.id_alu)}','${encodeURIComponent(g.cod_grupo)}','materias')">
+                        Asignar Materias
+                    </a>
                 </td>
             `;
             cuerpo.appendChild(trAlumno);
@@ -117,36 +124,23 @@ async function cargarGrupos() {
     }
 }
 
-async function setCurrentAlumno(idAlu, codGrupo) {
-    const resp = await fetch('../../backend/grupos/set_current.php', {
+async function setCurrentAlumno(idAlu, codGrupo, action = 'tipo') {
+    const idUser = '<?= $_SESSION['user_id'] ?>';
+    const resp = await fetch('../../backend/grupos/setCurrentAlumnoHandler.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id_alu: idAlu, cod_grupo: codGrupo }),
+        body: JSON.stringify({ id_alu: idAlu, cod_grupo: codGrupo, id_user: idUser, action }),
         credentials: 'same-origin'
     });
     const data = await resp.json();
     if (data.success) {
-        window.location.href = "../../frontend/tipo/create_tipo.php";
+        window.location.href = data.next;
     } else {
         alert("Error al fijar el alumno: " + data.message);
     }
 }
 
-async function asignarMaterias(idAlu, codGrupo) {
-    const resp = await fetch('../../backend/grupos/set_current.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id_alu: idAlu, cod_grupo: codGrupo }),
-        credentials: 'same-origin'
-    });
-    const data = await resp.json();
-    if (data.success) {
-        window.location.href = "../../frontend/materias/asignar_materias.php";
-    } else {
-        alert("Error al fijar el alumno para materias: " + data.message);
-    }
-}
-
+// Carga inicial
 cargarGrupos();
 </script>
 
