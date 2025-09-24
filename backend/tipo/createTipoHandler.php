@@ -1,71 +1,101 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// backend/tipo/createTipoHandler.php
 
-session_start(); // <--- imprescindible al principio
+// ---------------------------
+// 1. Configuración inicial
+// ---------------------------
+session_start();
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+error_reporting(0);
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__.'/createTipoHandler.log');
 
 header('Content-Type: application/json; charset=utf-8');
+
+// limpiar cualquier salida accidental
+ob_start();
 
 require_once __DIR__.'/../../config/db/db.php';
 require_once __DIR__.'/../../config/auth/auth.php';
 
-requireAuth(); // verifica que usuario está logueado
+requireAuth();
 
-// Chequeo extra de usuario
+// ---------------------------
+// 2. Validaciones de sesión
+// ---------------------------
 if (!isset($_SESSION['user_id'])) {
+    ob_end_clean();
     echo json_encode(['success'=>false,'message'=>'Usuario no logueado']);
     exit();
 }
 
-// Validar rol
 $rol = $_SESSION['rol'] ?? '';
 if (!in_array($rol, ['Director','Tutor'])) {
+    ob_end_clean();
     echo json_encode(['success'=>false,'message'=>'Rol no autorizado']);
     exit();
 }
 
-// Grupo y centro de sesión
 $cod_centro = $_SESSION['cod_centro'] ?? '';
 $cod_grupo  = $_SESSION['current_group'] ?? null;
 
 if (!$cod_grupo) {
+    ob_end_clean();
     echo json_encode(['success'=>false,'message'=>'No se ha seleccionado ningún grupo.']);
     exit();
 }
 
-// Procesar formulario POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $data = json_decode(file_get_contents("php://input"), true) ?? [];
+// ---------------------------
+// 3. Procesar POST
+// ---------------------------
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    ob_end_clean();
+    echo json_encode(['success'=>false,'message'=>'Método no permitido']);
+    exit();
+}
 
-    $id_alu = $data['id_alu'] ?? '';
-    if (!$id_alu) {
-        echo json_encode(['success'=>false,'message'=>'Falta id_alu en la petición']);
-        exit();
-    }
+$input = file_get_contents("php://input");
+$data  = json_decode($input, true) ?? [];
 
-    $Tipo1 = isset($data['Tipo1']) ? 1 : 0;
-    $Informe = isset($data['Informe']) ? 1 : 0;
-    $Perfil1 = trim($data['Perfil1'] ?? '');
-    $ExtraPerfil1 = trim($data['ExtraPerfil1'] ?? '');
-    $Perfil2 = trim($data['Perfil2'] ?? '');
-    $ExtraPerfil2 = trim($data['ExtraPerfil2'] ?? '');
-    $OtrasObservaciones = trim($data['OtrasObservaciones'] ?? '');
+// ---------------------------
+// 4. Recoger datos
+// ---------------------------
+$id_alu = $data['id_alu'] ?? '';
+if (!$id_alu) {
+    ob_end_clean();
+    echo json_encode(['success'=>false,'message'=>'Falta id_alu en la petición']);
+    exit();
+}
 
-    // Validaciones mínimas
-    $error = "";
-    if ($Tipo1 && !$Perfil1) $error = "Debes seleccionar Perfil1";
-    elseif ($Perfil1 && !$ExtraPerfil1) $error = "Debes seleccionar ExtraPerfil1";
-    elseif ($Perfil1 && !$Perfil2) $error = "Debes seleccionar Perfil2";
-    elseif ($Perfil2 && !$ExtraPerfil2) $error = "Debes seleccionar ExtraPerfil2";
+$Tipo1           = isset($data['Tipo1']) && $data['Tipo1'] ? 1 : 0;
+$Informe         = isset($data['Informe']) && $data['Informe'] ? 1 : 0;
 
-    if ($error) {
-        http_response_code(400);
-        echo json_encode(['success'=>false,'message'=>$error]);
-        exit();
-    }
+// Campos opcionales: si vacíos, guardar 0
+$Perfil1         = !empty($data['Perfil1']) ? $data['Perfil1'] : '0';
+$ExtraPerfil1    = !empty($data['ExtraPerfil1']) ? $data['ExtraPerfil1'] : '0';
+$Perfil2         = !empty($data['Perfil2']) ? $data['Perfil2'] : '0';
+$ExtraPerfil2    = !empty($data['ExtraPerfil2']) ? $data['ExtraPerfil2'] : '0';
+$OtrasObservaciones = !empty($data['OtrasObservaciones']) ? $data['OtrasObservaciones'] : '0';
 
-    // Insertar o actualizar tipología
+$nextIndex = $data['nextIndex'] ?? 1;
+
+// ---------------------------
+// 5. Validaciones lógicas
+// ---------------------------
+if ($Tipo1 === 1 && $Perfil1 === '0') {
+    ob_end_clean();
+    echo json_encode([
+        'success' => false,
+        'message' => 'Debes seleccionar un Perfil1 si activas Perfil ACNEAE'
+    ]);
+    exit();
+}
+
+// ---------------------------
+// 6. Guardar en la base de datos
+// ---------------------------
+try {
     $stmt = $pdo->prepare("
         INSERT INTO ti_alu1
         (id_alu, cod_centro, cod_grupo, Tipo1, Informe, Perfil1, ExtraPerfil1, Perfil2, ExtraPerfil2, OtrasObservaciones, id_user)
@@ -79,20 +109,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ExtraPerfil2 = VALUES(ExtraPerfil2),
             OtrasObservaciones = VALUES(OtrasObservaciones)
     ");
+
     $stmt->execute([
-        $id_alu, $cod_centro, $cod_grupo,
-        $Tipo1, $Informe, $Perfil1, $ExtraPerfil1, $Perfil2, $ExtraPerfil2, $OtrasObservaciones,
-        $_SESSION['user_id'] // quien crea el registro
+        $id_alu,
+        $cod_centro,
+        $cod_grupo,
+        $Tipo1,
+        $Informe,
+        $Perfil1,
+        $ExtraPerfil1,
+        $Perfil2,
+        $ExtraPerfil2,
+        $OtrasObservaciones,
+        $_SESSION['user_id']
     ]);
 
-    echo json_encode([
-        'success' => true,
-        'message' => 'Tipología registrada correctamente',
-        'nextIndex' => ($data['nextIndex'] ?? null)
-    ]);
+} catch (Exception $e) {
+    // log y respuesta JSON
+    error_log($e->getMessage());
+    ob_end_clean();
+    echo json_encode(['success'=>false,'message'=>'Error al guardar en la base de datos']);
     exit();
 }
 
-// Si no es POST
-echo json_encode(['success'=>false,'message'=>'Método no permitido']);
+// ---------------------------
+// 7. Respuesta JSON limpia
+// ---------------------------
+ob_end_clean();
+echo json_encode([
+    'success' => true,
+    'message' => 'Tipología registrada correctamente',
+    'nextIndex' => $nextIndex
+]);
 exit();

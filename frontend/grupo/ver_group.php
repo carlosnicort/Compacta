@@ -96,7 +96,6 @@ async function cargarGrupos() {
             const alumno = g.alumnos && g.alumnos[i-1] 
                 ? g.alumnos[i-1]
                 : {
-                    id_alu: `${g.cod_centro}${g.Etapa}${g.Curso}${g.Grupo}${i}`,
                     id_user: idUser,
                     tipo_creado: false
                 };
@@ -107,14 +106,14 @@ async function cargarGrupos() {
             const linkTipo = alumno.tipo_creado ? 'Ver/Editar Perfil' : 'Crear Tipo';
 
             trAlumno.innerHTML = `
-                <td colspan="5">&nbsp;&nbsp;&nbsp;Alumno ${i}</td>
-                <td>ID User: ${alumno.id_user || ''}</td>
+				<td colspan="5">&nbsp;&nbsp;&nbsp;${alumno.id_alu}</td>
+                <td>Id Registro: ${alumno.id_user || ''}</td>
                 <td>
-                    <a href="#" onclick="setCurrentAlumno('${encodeURIComponent(alumno.id_alu)}','${encodeURIComponent(g.cod_grupo)}','tipo')">
+                    <a href="#" class="set-alumno" data-index="${i}" data-codgrupo="${g.cod_grupo}" data-action="tipo">
                         ${linkTipo}
                     </a>
                     | 
-                    <a href="#" onclick="setCurrentAlumno('${encodeURIComponent(alumno.id_alu)}','${encodeURIComponent(g.cod_grupo)}','materias')">
+                    <a href="#" class="set-alumno" data-index="${i}" data-codgrupo="${g.cod_grupo}" data-action="materias">
                         Asignar Materias
                     </a>
                 </td>
@@ -122,27 +121,47 @@ async function cargarGrupos() {
             cuerpo.appendChild(trAlumno);
         }
     }
-}
 
-async function setCurrentAlumno(idAlu, codGrupo, action = 'tipo') {
-    const idUser = '<?= $_SESSION['user_id'] ?>';
-    const resp = await fetch('../../backend/grupos/setCurrentAlumnoHandler.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id_alu: idAlu, cod_grupo: codGrupo, id_user: idUser, action }),
-        credentials: 'same-origin'
+    // ----------------------------
+    // JS para manejar click en alumnos
+    // ----------------------------
+    document.querySelectorAll('.set-alumno').forEach(el => {
+        el.addEventListener('click', async e => {
+            e.preventDefault();
+            const index = el.dataset.index;
+            const cod_grupo = el.dataset.codgrupo;
+            const action = el.dataset.action;
+
+            try {	
+                const resp = await fetch('../../backend/session/set_current.php', {
+                    method: 'POST',
+                    body: JSON.stringify({ index, cod_grupo }),
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin'
+                });
+                const data = await resp.json();
+                if (data.success) {
+                    // Redirige según acción
+                    if (action === 'tipo') {
+                        window.location.href = '../../frontend/tipo/create_tipo.php';
+                    } else if (action === 'materias') {
+                        window.location.href = '../../frontend/materias/asignar_materias.php';
+                    }
+                } else {
+                    alert("Error al fijar el alumno: " + data.message);
+                }
+            } catch (err) {
+                alert("Error de conexión");
+                console.error(err);
+            }
+        });
     });
-    const data = await resp.json();
-    if (data.success) {
-        window.location.href = data.next;
-    } else {
-        alert("Error al fijar el alumno: " + data.message);
-    }
 }
 
 // Carga inicial
 cargarGrupos();
 </script>
+
 
 
 </body>

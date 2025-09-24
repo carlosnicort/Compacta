@@ -1,99 +1,121 @@
 <?php
-// create_tipo.php
-session_start();
+if (session_status() === PHP_SESSION_NONE) session_start();
 
-// ---------------------------
-// 1. Datos de sesión
-// ---------------------------
+require_once __DIR__ . '/../../config/db/db.php';
+require_once __DIR__ . '/../../config/auth/auth.php';
+requireAuth();
+
+// Variables de sesión
+$id_alu = $_SESSION['current_id_alu'] ?? '';
+$cod_grupo = $_SESSION['current_group'] ?? '';
 $cod_centro = $_SESSION['cod_centro'] ?? '';
-$listado    = $_SESSION['listado'] ?? 1; 
-$cod_grupo  = $_SESSION['current_group'] ?? '';
-$id_alu     = $_SESSION['current_id_alu'] ?? '';
+$listado = $_SESSION['listado'] ?? 0;
 
-// Validación mínima
-if (!$id_alu || !$cod_grupo) {
-    die("Error: faltan datos de sesión (id_alu o cod_grupo)");
+// ---------------------------
+// 1. Cargar perfiles desde la BBDD
+// ---------------------------
+$extras = [];
+try {
+    $stmt = $pdo->query("SELECT perfil, opcion FROM ti_perfiles ORDER BY perfil, id ASC");
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($rows as $row) {
+        $perfil = $row['perfil'];
+        $opcion = $row['opcion'];
+        if (!isset($extras[$perfil])) $extras[$perfil] = [];
+        $extras[$perfil][] = $opcion;
+    }
+} catch (PDOException $e) {
+    die("Error al cargar perfiles: " . $e->getMessage());
 }
 
 // ---------------------------
-// 2. Catálogo de extras
+// 2. Comprobar si ya existe registro de este alumno
 // ---------------------------
-$extras = [
-    "TDAH"     => ["Leve", "Moderado", "Severo"],
-    "Dislexia" => ["Lectora", "Escritura", "Comprensión"],
-    "Autismo"  => ["Nivel 1", "Nivel 2", "Nivel 3"]
-];
+$registroPrevio = null;
+try {
+    $stmt = $pdo->prepare("SELECT * FROM ti_alu1 WHERE id_alu = ?");
+    $stmt->execute([$id_alu]);
+    $registroPrevio = $stmt->fetch(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error al cargar registro previo: " . $e->getMessage());
+}
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Crear Tipología</title>
+<meta charset="utf-8">
+<title>Crear Tipo</title>
+<style>
+    label { display: block; margin-top: 10px; }
+    select, input[type="text"] { width: 300px; }
+</style>
 </head>
 <body>
-<h2>Crear Tipología - Alumno (ID: <?= htmlspecialchars($id_alu) ?>)</h2>
+<h1>Registro de Tipología</h1>
 
-<h3>Centro y Grupo</h3>
-<p><strong>Código Centro:</strong> <?= htmlspecialchars($cod_centro) ?></p>
-<p><strong>Cod Grupo:</strong> <?= htmlspecialchars($cod_grupo) ?></p>
-<p><strong>Alumnos:</strong> <?= htmlspecialchars($listado) ?></p>
+<div id="mensaje" style="color:red"></div>
 
-<p id="mensaje" style="color:red;"></p>
+<!-- Visualización de datos previos -->
+<?php if ($registroPrevio): ?>
+    <div id="datosPrevios" style="border:1px solid #ccc; padding:10px; margin-bottom:15px;">
+        <h3>Datos actuales del alumno</h3>
+        <p>Tipo ACNEAE: <?= $registroPrevio['Tipo1'] ? 'Sí' : 'No' ?></p>
+        <p>Informe: <?= $registroPrevio['Informe'] ? 'Sí' : 'No' ?></p>
+        <p>Perfil1: <?= htmlspecialchars($registroPrevio['Perfil1']) ?></p>
+        <p>ExtraPerfil1: <?= htmlspecialchars($registroPrevio['ExtraPerfil1']) ?></p>
+        <p>Perfil2: <?= htmlspecialchars($registroPrevio['Perfil2']) ?></p>
+        <p>ExtraPerfil2: <?= htmlspecialchars($registroPrevio['ExtraPerfil2']) ?></p>
+        <p>Otras Observaciones: <?= htmlspecialchars($registroPrevio['OtrasObservaciones']) ?></p>
+    </div>
+<?php else: ?>
+    <div id="datosPrevios" style="border:1px solid #ccc; padding:10px; margin-bottom:15px;">
+        <h3>Este alumno aún no tiene perfil asignado</h3>
+        <p>Se van a asignar los datos del perfil por primera vez.</p>
+    </div>
+<?php endif; ?>
 
-<!-- ------------------------
- 3. Formulario
-------------------------- -->
 <form id="formTipo">
-    <label><input type="checkbox" id="Tipo1"> Activar Tipología</label><br>
-    <label><input type="checkbox" id="Informe"> Informe</label><br><br>
+    <input type="checkbox" id="Tipo1">
+    <label for="Tipo1">Perfil ACNEAE</label><br>
 
-    <label>Perfil1:</label><br>
-    <select id="Perfil1" disabled>
-        <option value="">Selecciona</option>
-        <?php foreach(array_keys($extras) as $perfil): ?>
-            <option value="<?= htmlspecialchars($perfil) ?>"><?= htmlspecialchars($perfil) ?></option>
-        <?php endforeach; ?>
-    </select><br><br>
+    <label><input type="checkbox" id="Informe" disabled> Informe</label><br><br>
 
-    <label>ExtraPerfil1:</label><br>
-    <select id="ExtraPerfil1" style="display:none;">
-        <option value="">Selecciona Perfil1 primero</option>
-    </select><br><br>
+    <label>Perfil1:</label>
+    <select id="Perfil1" disabled></select>
 
-    <label>Perfil2:</label><br>
-    <select id="Perfil2" disabled>
-        <option value="">Selecciona Perfil1 primero</option>
-        <?php foreach(array_keys($extras) as $perfil): ?>
-            <option value="<?= htmlspecialchars($perfil) ?>"><?= htmlspecialchars($perfil) ?></option>
-        <?php endforeach; ?>
-    </select><br><br>
+    <label>ExtraPerfil1:</label>
+    <select id="ExtraPerfil1" style="display:none;"></select>
 
-    <label>ExtraPerfil2:</label><br>
-    <select id="ExtraPerfil2" style="display:none;">
-        <option value="">Selecciona Perfil2 primero</option>
-    </select><br><br>
+    <label>Perfil2:</label>
+    <select id="Perfil2" disabled></select>
 
-    <label>Otras Observaciones:</label><br>
+    <label>ExtraPerfil2:</label>
+    <select id="ExtraPerfil2" style="display:none;"></select>
+
+    <label>Otras Observaciones:</label>
     <input type="text" id="OtrasObservaciones" maxlength="255"><br><br>
 
     <button type="submit">Guardar y Siguiente</button>
 </form>
 
-<p><a href="../menu.php">Volver al Menú</a></p>
+<p><a href="../grupo/ver_group.php">Volver al Menú</a></p>
 
-<!-- ------------------------
- 4. JS dinámico
-------------------------- -->
 <script>
+// ---------------------------
+// Variables PHP → JS
+// ---------------------------
+const idAlu = <?= json_encode($id_alu) ?>;
+const codGrupo = <?= json_encode($cod_grupo) ?>;
+const listado = <?= (int)$listado ?>;
+const codCentro = <?= json_encode($cod_centro) ?>;
+const extras = <?= json_encode($extras) ?>;
+const registroPrevio = <?= json_encode($registroPrevio) ?>;
+
 document.addEventListener('DOMContentLoaded', () => {
-    const extras = <?= json_encode($extras) ?>;
     let index = 1;
-    const listado = <?= (int)$listado ?>;
-    const codCentro = '<?= $cod_centro ?>';
-    const codGrupo = '<?= $cod_grupo ?>';
-    const idAlu = '<?= $id_alu ?>';
 
     const tipo1 = document.getElementById('Tipo1');
+    const informe = document.getElementById('Informe');
     const perfil1 = document.getElementById('Perfil1');
     const extra1 = document.getElementById('ExtraPerfil1');
     const perfil2 = document.getElementById('Perfil2');
@@ -101,11 +123,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const mensaje = document.getElementById('mensaje');
     const form = document.getElementById('formTipo');
 
+    // Inicializar selects con perfiles
+    perfil1.innerHTML = '<option value="0">Selecciona</option>';
+    perfil2.innerHTML = '<option value="0">Selecciona Perfil1 primero</option>';
+    Object.keys(extras).forEach(p => {
+        perfil1.add(new Option(p,p));
+        perfil2.add(new Option(p,p));
+    });
+
     // ---------------------------
-    // Funciones de activación
+    // Funciones toggles
     // ---------------------------
     function togglePerfil1() {
         perfil1.disabled = !tipo1.checked;
+        informe.disabled = !tipo1.checked;
         if (!tipo1.checked) {
             perfil1.value = '';
             toggleExtra1();
@@ -118,17 +149,18 @@ document.addEventListener('DOMContentLoaded', () => {
         extra1.innerHTML = '';
         if (val1 && extras[val1]) {
             extra1.style.display = 'inline';
-            extras[val1].forEach(opt => extra1.add(new Option(opt,opt)));
+            extras[val1].forEach(opt => extra1.add(new Option(opt, opt)));
         } else {
             extra1.style.display = 'none';
-            extra1.innerHTML = '<option value="">Selecciona Perfil1 primero</option>';
+            extra1.innerHTML = '<option value="0">Selecciona Perfil1 primero</option>';
         }
+        togglePerfil2();
     }
 
     function togglePerfil2() {
-        const val1 = perfil1.value;
-        perfil2.disabled = !val1;
-        if (!val1) {
+        const valExtra1 = extra1.value;
+        perfil2.disabled = !valExtra1 || valExtra1 === '0';
+        if (!perfil2.disabled) {
             perfil2.value = '';
             toggleExtra2();
         }
@@ -139,33 +171,50 @@ document.addEventListener('DOMContentLoaded', () => {
         extra2.innerHTML = '';
         if (val2 && extras[val2]) {
             extra2.style.display = 'inline';
-            extras[val2].forEach(opt => extra2.add(new Option(opt,opt)));
+            extras[val2].forEach(opt => extra2.add(new Option(opt, opt)));
         } else {
             extra2.style.display = 'none';
-            extra2.innerHTML = '<option value="">Selecciona Perfil2 primero</option>';
+            extra2.innerHTML = '<option value="0">Selecciona Perfil2 primero</option>';
         }
     }
 
+    // ---------------------------
     // Eventos
+    // ---------------------------
     tipo1.addEventListener('click', togglePerfil1);
     perfil1.addEventListener('change', () => { toggleExtra1(); togglePerfil2(); });
     perfil2.addEventListener('change', toggleExtra2);
 
     // ---------------------------
-    // Submit -> fetch al backend
+    // Prellenado si existe registro previo
+    // ---------------------------
+    if (registroPrevio) {
+        tipo1.checked = registroPrevio.Tipo1 == 1;
+        informe.checked = registroPrevio.Informe == 1;
+        perfil1.value = registroPrevio.Perfil1 || '0';
+        toggleExtra1();
+        extra1.value = registroPrevio.ExtraPerfil1 || '0';
+        perfil2.value = registroPrevio.Perfil2 || '0';
+        toggleExtra2();
+        extra2.value = registroPrevio.ExtraPerfil2 || '0';
+        document.getElementById('OtrasObservaciones').value = registroPrevio.OtrasObservaciones || '';
+    }
+
+    // ---------------------------
+    // Submit
     // ---------------------------
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const formData = {
             id_alu: idAlu,
             cod_grupo: codGrupo,
-            Tipo1: tipo1.checked,
-            Informe: document.getElementById('Informe').checked,
-            Perfil1: perfil1.value,
-            ExtraPerfil1: extra1.value,
-            Perfil2: perfil2.value,
-            ExtraPerfil2: extra2.value,
-            OtrasObservaciones: document.getElementById('OtrasObservaciones').value
+            Tipo1: tipo1.checked ? 1 : 0,
+            Informe: informe.checked ? 1 : 0,
+            Perfil1: perfil1.value || '0',
+            ExtraPerfil1: extra1.value || '0',
+            Perfil2: perfil2.value || '0',
+            ExtraPerfil2: extra2.value || '0',
+            OtrasObservaciones: document.getElementById('OtrasObservaciones').value || '0'
         };
 
         try {
@@ -199,6 +248,12 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error(err);
         }
     });
+
+    // Inicialización
+    togglePerfil1();
+    toggleExtra1();
+    togglePerfil2();
+    toggleExtra2();
 });
 </script>
 </body>

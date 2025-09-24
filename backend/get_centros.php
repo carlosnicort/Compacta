@@ -1,17 +1,20 @@
 <?php
-require_once __DIR__ . '/../src/db.php';
-
-// Leer parámetro de búsqueda (opcional)
-$term = $_GET['term'] ?? '';
-
-$stmt = $pdo->prepare("SELECT cod_centro, nombre_centro 
-                       FROM ttCentros 
-                       WHERE cod_centro LIKE ? 
-                       ORDER BY cod_centro ASC 
-                       LIMIT 10");
-$stmt->execute(["%$term%"]);
-$centros = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Devolver JSON
+if (session_status() === PHP_SESSION_NONE) session_start();
+require_once __DIR__ . '/../config/db/db.php';
 header('Content-Type: application/json');
-echo json_encode($centros);
+
+try {
+    $stmt = $pdo->query("SELECT cod_centro, nombre_centro FROM ttcentros ORDER BY cod_centro ASC");
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC); // Array de objetos: [{cod_centro, nombre_centro}, ...]
+
+    echo json_encode([
+        'success' => true,
+        'centros' => $rows
+    ]);
+} catch (PDOException $e) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Error al cargar centros'
+    ]);
+}
+?>

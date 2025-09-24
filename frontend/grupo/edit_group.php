@@ -3,10 +3,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once __DIR__ . '/../../config/auth/auth.php';
-
 require_once __DIR__ . '/../../config/db/db.php';
 requireAuth();
-
 
 $userId = $_SESSION['user_id'];
 $rol = $_SESSION['rol'];
@@ -18,7 +16,7 @@ if (!$grupo_id) {
 }
 
 // Verificar permisos
-$stmt = $pdo->prepare("SELECT id_user FROM ti_gr1 WHERE id = ?");
+$stmt = $pdo->prepare("SELECT * FROM ti_gr1 WHERE id = ?");
 $stmt->execute([$grupo_id]);
 $grupo = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -31,9 +29,10 @@ if ($rol === 'Tutor' && $grupo['id_user'] != $userId) {
     die("No tienes permiso para editar este grupo");
 }
 
-// Para director no hace falta validar, pero podrías agregar límites adicionales si quieres
-
-// Aquí sigue el resto del código para editar
+// Obtener datos del centro asociado
+$stmtCentro = $pdo->prepare("SELECT cod_centro, nombre_centro, tipo_centro, loc FROM ttcentros WHERE cod_centro = ?");
+$stmtCentro->execute([$grupo['cod_centro']]);
+$centro = $stmtCentro->fetch(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -41,14 +40,36 @@ if ($rol === 'Tutor' && $grupo['id_user'] != $userId) {
 <head>
 <meta charset="UTF-8">
 <title>Editar Grupo</title>
+<style>
+    .visualizacion { background-color: #eef; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; }
+</style>
 </head>
 <body>
 <h2>Editar Grupo</h2>
 
 <div id="mensaje" style="color:red;"></div>
 
+<!-- Visualización previa -->
+<div class="visualizacion">
+    <?php if ($grupo): ?>
+        <strong>Datos actuales del grupo:</strong><br>
+        Código Grupo: <?= htmlspecialchars($grupo['cod_grupo']) ?><br>
+        Etapa: <?= htmlspecialchars($grupo['Etapa'] ?? '-') ?><br>
+        Modalidad: <?= htmlspecialchars($grupo['Modalidad'] ?? '-') ?><br>
+        Curso: <?= htmlspecialchars($grupo['Curso'] ?? '-') ?><br>
+        Grupo: <?= htmlspecialchars($grupo['Grupo'] ?? '-') ?><br>
+        Nº alumnos: <?= htmlspecialchars($grupo['listado'] ?? '0') ?><br>
+        Código Centro: <?= htmlspecialchars($centro['cod_centro'] ?? '-') ?><br>
+        Nombre Centro: <?= htmlspecialchars($centro['nombre_centro'] ?? '-') ?><br>
+        Tipo Centro: <?= htmlspecialchars($centro['tipo_centro'] ?? '-') ?><br>
+        Localidad: <?= htmlspecialchars($centro['loc'] ?? '-') ?><br>
+    <?php else: ?>
+        <span style="color:blue;">Este grupo se va a asignar por primera vez.</span>
+    <?php endif; ?>
+</div>
+
 <form id="formGrupo">
-    <input type="hidden" name="id" value="<?= $id ?>">
+    <input type="hidden" name="id" value="<?= htmlspecialchars($grupo_id) ?>">
 
     <label>Etapa:</label>
     <input type="text" name="Etapa" id="Etapa"><br><br>
@@ -74,7 +95,7 @@ if ($rol === 'Tutor' && $grupo['id_user'] != $userId) {
 <script>
 // Cargar datos del grupo
 async function cargarGrupo() {
-    const res = await fetch('../../backend/grupos/edit_group_handler.php?id=<?= $id ?>');
+    const res = await fetch(`../../backend/grupos/edit_group_handler.php?id=<?= $grupo_id ?>`);
     const data = await res.json();
     if (data.success) {
         const g = data.grupo;
@@ -94,9 +115,10 @@ document.getElementById('formGrupo').addEventListener('submit', async e => {
     const form = e.target;
     const formData = new FormData(form);
 
-    const res = await fetch('../backend/edit_group.php?id=<?= $id ?>', {
+    const res = await fetch('../../backend/grupos/edit_group.php?id=<?= $grupo_id ?>', {
         method: 'POST',
-        body: formData
+        body: formData,
+        credentials: 'same-origin'
     });
 
     const data = await res.json();
