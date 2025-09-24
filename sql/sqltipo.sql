@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-09-2025 a las 17:51:47
+-- Tiempo de generación: 24-09-2025 a las 21:29:47
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -20,6 +20,20 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `u530590124_compacta_educa`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `progreso`
+--
+
+CREATE TABLE `progreso` (
+  `id_progreso` int(11) NOT NULL,
+  `id_alu` varchar(50) NOT NULL,
+  `cod_grupo` varchar(20) NOT NULL,
+  `estado` enum('pendiente','completado') DEFAULT 'pendiente',
+  `fecha` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -276,13 +290,37 @@ CREATE TABLE `tidua9_1` (
 --
 
 CREATE TABLE `ti_alu1` (
-  `id` int(11) NOT NULL,
-  `id_alum` varchar(50) NOT NULL,
-  `cod_grupo` varchar(50) NOT NULL,
-  `cod_Acneae` varchar(150) NOT NULL,
-  `Tipo_Acneae` varchar(150) NOT NULL,
-  `Antiguedad` int(2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `id_alu` varchar(50) NOT NULL,
+  `cod_centro` varchar(20) NOT NULL,
+  `cod_grupo` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id_user` int(10) UNSIGNED NOT NULL,
+  `Tipo1` tinyint(1) DEFAULT 0,
+  `Informe` tinyint(1) DEFAULT 0,
+  `Perfil1` varchar(50) DEFAULT NULL,
+  `ExtraPerfil1` varchar(50) DEFAULT NULL,
+  `Perfil2` varchar(50) DEFAULT NULL,
+  `ExtraPerfil2` varchar(50) DEFAULT NULL,
+  `OtrasObservaciones` varchar(255) DEFAULT NULL,
+  `fecha` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `ti_alu1`
+--
+
+INSERT INTO `ti_alu1` (`id_alu`, `cod_centro`, `cod_grupo`, `id_user`, `Tipo1`, `Informe`, `Perfil1`, `ExtraPerfil1`, `Perfil2`, `ExtraPerfil2`, `OtrasObservaciones`, `fecha`) VALUES
+('30000213BAE1D1', '30000213', 'BAE1D', 2, 0, 0, '0', '0', '0', '0', '0', '2025-09-24 16:20:43'),
+('30000213BAE1D2', '30000213', 'BAE1D', 2, 1, 0, 'TDAH', 'Moderado', '0', '0', '0', '2025-09-24 16:14:41'),
+('30000213BAE1D3', '30000213', 'BAE1D', 2, 0, 0, '0', '0', '0', '0', '0', '2025-09-24 16:20:48'),
+('30000213BAE1D4', '30000213', 'BAE1D', 2, 0, 0, '0', '0', '0', '0', '0', '2025-09-24 16:25:08'),
+('30000213BCT2H1', '30000213', 'BCT2H', 2, 0, 0, '0', '0', '0', '0', '0', '2025-09-24 16:20:53'),
+('30000213BCT2H2', '30000213', 'BCT2H', 2, 0, 0, '0', '0', '0', '0', '0', '2025-09-24 16:55:37'),
+('30000213ESO3C1', '30000213', 'ESO3C', 2, 0, 0, '0', '0', '0', '0', '0', '2025-09-24 16:55:29'),
+('30000213ESO3C2', '30000213', 'ESO3C', 2, 1, 0, 'NEE-Derivadas de discapacidad', 'Intelectual moderada', '0', '0', '0', '2025-09-24 16:55:44'),
+('30000213ESO3C3', '30000213', 'ESO3C', 2, 0, 0, '0', '0', '0', '0', '0', '2025-09-24 17:16:34'),
+('30000213INF1A1', '30000213', 'INF1A', 2, 1, 0, 'Altas capacidades intelectuales', 'Talento complejo académico', '0', '0', '0', '2025-09-24 17:16:25'),
+('30000213INF3A1', '30000213', 'INF3A', 0, 1, 1, 'TDAH', 'Leve', 'Dislexia', 'Comprensión', '', '2025-09-22 23:27:35'),
+('30000377CFM2A1', '30000377', 'CFM2A', 1, 1, 0, 'Trastornos del aprendizaje', 'Discalculia', 'Desconocimiento grave de la lengua', 'Recibe apoyo complementario sin ser de incorporaci', 'sdolñw', '2025-09-24 17:21:48');
 
 -- --------------------------------------------------------
 
@@ -298,21 +336,126 @@ CREATE TABLE `ti_gr1` (
   `Modalidad` varchar(20) NOT NULL,
   `Curso` int(1) NOT NULL,
   `Grupo` varchar(1) NOT NULL,
-  `cod_grupo` varchar(50) NOT NULL,
-  `listado` int(11) NOT NULL
+  `cod_grupo` varchar(50) DEFAULT NULL,
+  `listado` int(11) NOT NULL,
+  `tipo_completado` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `ti_gr1`
 --
 
-INSERT INTO `ti_gr1` (`id`, `id_user`, `cod_centro`, `Etapa`, `Modalidad`, `Curso`, `Grupo`, `cod_grupo`, `listado`) VALUES
-(19, 0, '30005764', 'Infantil', '', 1, 'A', 'INF1A', 2),
-(22, 0, '30005764', 'Primaria', '', 1, 'A', 'PRI1A', 1),
-(23, 0, '30000161', 'ESO', 'ESO', 3, 'C', 'ESO3C', 5),
-(24, 0, '30000161', 'ESO', 'ESO', 2, 'B', 'ESO2B', 11),
-(25, 4, '30005201', 'ESO', 'DIV', 2, 'B', 'DIV2B', 9),
-(26, 4, '', 'Bachillerato', 'BAE', 1, 'A', 'BAE1A', 6);
+INSERT INTO `ti_gr1` (`id`, `id_user`, `cod_centro`, `Etapa`, `Modalidad`, `Curso`, `Grupo`, `cod_grupo`, `listado`, `tipo_completado`) VALUES
+(40, 2, '30000213', 'Infantil', '', 1, 'A', 'INF1A', 1, 0),
+(42, 2, '30000213', 'ESO', 'ESO', 3, 'C', 'ESO3C', 3, 0),
+(43, 2, '30000213', 'Bachillerato', 'BAE', 1, 'D', 'BAE1D', 4, 0),
+(44, 2, '30000213', 'Bachillerato', 'BCT', 2, 'H', 'BCT2H', 2, 0),
+(45, 2, '30000213', 'Infantil', '', 3, 'A', 'INF3A', 1, 0),
+(46, 1, '30000377', 'FP', 'CFM', 2, 'A', 'CFM2A', 1, 0),
+(47, 9, '30000389', 'FP', 'CFS', 2, 'A', 'CFS2A', 20, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ti_perfiles`
+--
+
+CREATE TABLE `ti_perfiles` (
+  `id` int(11) NOT NULL,
+  `perfil` varchar(100) NOT NULL,
+  `opcion` varchar(255) NOT NULL,
+  `extra` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `ti_perfiles`
+--
+
+INSERT INTO `ti_perfiles` (`id`, `perfil`, `opcion`, `extra`) VALUES
+(1, 'NEE-Derivadas de discapacidad', 'Sin especificar', ''),
+(2, 'NEE-Derivadas de discapacidad', 'Auditiva', ''),
+(3, 'NEE-Derivadas de discapacidad', 'Motora', ''),
+(4, 'NEE-Derivadas de discapacidad', 'Intelectual leve', ''),
+(5, 'NEE-Derivadas de discapacidad', 'Intelectual moderada', ''),
+(6, 'NEE-Derivadas de discapacidad', 'Intelectual grave', ''),
+(7, 'NEE-Derivadas de discapacidad', 'Visual', ''),
+(8, 'NEE-Derivadas de discapacidad', 'Pluridiscapacidad', ''),
+(9, 'NEE-No asociadas a discapacidad', 'Sin especificar', ''),
+(10, 'NEE-No asociadas a discapacidad', 'Trastornos del espectro del autismo', ''),
+(11, 'NEE-No asociadas a discapacidad', 'Trastornos graves de conducta/personalidad derivados de problemas de salud mental', ''),
+(12, 'NEE-No asociadas a discapacidad', 'Trastornos graves de la comunicación y del lenguaje', ''),
+(13, 'NEE-No asociadas a discapacidad', 'TEL graves', ''),
+(14, 'NEE-No asociadas a discapacidad', 'Retrasos severos del lenguaje', ''),
+(15, 'NEE-No asociadas a discapacidad', 'Disfasias', ''),
+(16, 'Retraso madurativo', 'Sin especificar', ''),
+(17, 'Trastornos del desarrollo del lenguaje y la comunicación', 'Sin especificar', ''),
+(18, 'Trastornos del desarrollo del lenguaje y la comunicación', 'Dificultades leves o moderada en la comprensión o la producción (expresión)', ''),
+(19, 'Trastornos del desarrollo del lenguaje y la comunicación', 'Dificultades leves o moderada en la producción', ''),
+(20, 'Trastornos del desarrollo del lenguaje y la comunicación', 'Dificultades leves o moderada en la expresión', ''),
+(21, 'Trastornos del desarrollo del lenguaje y la comunicación', 'Dificultades leves o moderada por trastorno fonológico', ''),
+(22, 'Trastornos del desarrollo del lenguaje y la comunicación', 'Dificultades leves o moderada en la fluidez', ''),
+(23, 'Trastornos del desarrollo del lenguaje y la comunicación', 'Dificultades leves o moderada en la comunicación social', ''),
+(24, 'Trastornos del desarrollo del lenguaje y la comunicación', 'Dificultades leves o moderada en el uso del lenguaje por trastorno pragmático', ''),
+(25, 'Trastornos de atención', 'Sin especificar', ''),
+(26, 'Trastornos de atención', 'Asociados al funcionamiento ejecutivo', ''),
+(27, 'Trastornos de atención', 'Dificultades de aprendizaje asociadas a la atención', ''),
+(28, 'Trastornos de atención', 'Asociadas a hiperactividad', ''),
+(29, 'Trastornos de atención', 'Atención e impulsividad', ''),
+(30, 'Trastornos de atención', 'Atención e hiperactividad', ''),
+(31, 'Trastornos de atención', 'Atención y funciones ejecutivas', ''),
+(32, 'Trastornos de atención', 'Impulsividad e hiperactividad', ''),
+(33, 'Trastornos de atención', 'Atención, impulsividad e hiperactividad', ''),
+(34, 'Trastornos de atención', 'Funciones ejecutivas, impulsividad e hiperactividad', ''),
+(35, 'Trastornos de atención', 'Trastorno de la coordinación motriz', ''),
+(36, 'Trastornos del aprendizaje', 'Sin especificar', ''),
+(37, 'Trastornos del aprendizaje', 'Dificultad en la lectura', ''),
+(38, 'Trastornos del aprendizaje', 'Dislexia', ''),
+(39, 'Trastornos del aprendizaje', 'Dificultad en la expresión escrita', ''),
+(40, 'Trastornos del aprendizaje', 'Disgrafía', ''),
+(41, 'Trastornos del aprendizaje', 'Disortografía', ''),
+(42, 'Trastornos del aprendizaje', 'Disgrafía y disortografía', ''),
+(43, 'Trastornos del aprendizaje', 'Dificultad matemática', ''),
+(44, 'Trastornos del aprendizaje', 'Discalculia', ''),
+(45, 'Trastornos del aprendizaje', 'Dificultad en la adquisición y uso de rutinas y habilidades procedimentales-no verbales (TANV)', ''),
+(46, 'Trastornos del aprendizaje', 'Dispraxia', ''),
+(47, 'Trastornos del aprendizaje', 'Trastorno de la coordinación motriz', ''),
+(48, 'Trastornos del aprendizaje', 'Inteligencia límite', ''),
+(49, 'Desconocimiento grave de la lengua', 'Sin especificar', ''),
+(50, 'Desconocimiento grave de la lengua', 'Recibe apoyo complementario sin ser de incorporación tardía', ''),
+(51, 'Con vulnerabilidad y con desfase', 'Sin especificar', ''),
+(52, 'Con vulnerabilidad y con desfase', 'Violencia de género, factores geográficos, étnicos o por experiencias adversas', ''),
+(53, 'Con vulnerabilidad y con desfase', 'Factores económicos', ''),
+(54, 'Con vulnerabilidad y con desfase', 'Razones culturales', ''),
+(55, 'Con vulnerabilidad y con desfase', 'Razones sociales', ''),
+(56, 'Con vulnerabilidad y con desfase', 'Factores étnicos', ''),
+(57, 'Con vulnerabilidad y con desfase', 'Situación étnica', ''),
+(58, 'Con vulnerabilidad y con desfase', 'Por experiencias adversas en la infancia (EAI)', ''),
+(59, 'Altas capacidades intelectuales', 'Sin especificar', ''),
+(60, 'Altas capacidades intelectuales', 'Precoz', ''),
+(61, 'Altas capacidades intelectuales', 'Sobredotación', ''),
+(62, 'Altas capacidades intelectuales', 'Talento complejo académico', ''),
+(63, 'Altas capacidades intelectuales', 'Talento complejo académico con creatividad superior o igual a 50', ''),
+(64, 'Altas capacidades intelectuales', 'Talento complejo académico con creatividad inferior a 50', ''),
+(65, 'Altas capacidades intelectuales', 'Talento complejo artístico figurativo', ''),
+(66, 'Altas capacidades intelectuales', 'Talento complejo académico y uno o más talentos simples', ''),
+(67, 'Altas capacidades intelectuales', 'Talento complejo artístico figurativo y uno o más talentos simples', ''),
+(68, 'Altas capacidades intelectuales', 'Talento simple lógico', ''),
+(69, 'Altas capacidades intelectuales', 'Talento simple verbal', ''),
+(70, 'Altas capacidades intelectuales', 'Talento simple matemático', ''),
+(71, 'Altas capacidades intelectuales', 'Talento simple creativo', ''),
+(72, 'Altas capacidades intelectuales', 'Talento simple espacial', ''),
+(73, 'Altas capacidades intelectuales', 'Talento simple mecánico', ''),
+(74, 'Altas capacidades intelectuales', 'Talento simple sin especificar', ''),
+(75, 'Integración tardía al sistema', 'Sin especificar', ''),
+(76, 'Integración tardía al sistema', 'Escolarizado en un curso inferior por desfase de dos cursos o más', ''),
+(77, 'Integración tardía al sistema', 'Recibe atención', ''),
+(78, 'Condiciones personales o historia escolar', 'Sin especificar', ''),
+(79, 'Condiciones personales o historia escolar', 'Condiciones personales', ''),
+(80, 'Condiciones personales o historia escolar', 'Riesgo abandono escolar', ''),
+(81, 'Condiciones personales o historia escolar', 'Hospitalización', ''),
+(82, 'Condiciones personales o historia escolar', 'Larga convalecencia', ''),
+(83, 'Condiciones personales o historia escolar', 'Situación medica señalada por SMS', ''),
+(84, 'Condiciones personales o historia escolar', 'Ideas autolesivas', '');
 
 -- --------------------------------------------------------
 
@@ -337,10 +480,9 @@ CREATE TABLE `ti_tipologia` (
 --
 
 INSERT INTO `ti_tipologia` (`id_alu`, `cod_grupo`, `Tipo1`, `Informe`, `Perfil1`, `ExtraPerfil1`, `Perfil2`, `ExtraPerfil2`, `Otro`) VALUES
-(1, 'ESO3C', 0, 0, 'TDAH', 'Severo', 'TDAH', 'Leve', 'fhgffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'),
-(2, '', 0, 0, NULL, '', NULL, '', ''),
-(3, '', 1, 0, 'TDAH', 'Leve', '', '', '´ñloikjnhbgvf'),
-(4, '', 0, 0, NULL, '', NULL, '', '');
+(5, '', 1, 0, 'Autismo', 'Nivel 2', '', '', ''),
+(6, '', 0, 0, NULL, '', NULL, '', ''),
+(7, '', 0, 0, NULL, '', NULL, '', '');
 
 -- --------------------------------------------------------
 
@@ -1113,6 +1255,109 @@ INSERT INTO `ttprev0` (`id_txt`, `intro`, `resultado`, `ambito`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `tt_perfiles_extras`
+--
+
+CREATE TABLE `tt_perfiles_extras` (
+  `id` int(11) NOT NULL,
+  `perfil` varchar(100) NOT NULL,
+  `extra` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tt_perfiles_extras`
+--
+
+INSERT INTO `tt_perfiles_extras` (`id`, `perfil`, `extra`) VALUES
+(1, 'NEE-Derivadas de discapacidad', 'sin especificar'),
+(2, 'NEE-Derivadas de discapacidad', 'auditiva'),
+(3, 'NEE-Derivadas de discapacidad', 'motora'),
+(4, 'NEE-Derivadas de discapacidad', 'intelectual leve'),
+(5, 'NEE-Derivadas de discapacidad', 'intelectual moderada'),
+(6, 'NEE-Derivadas de discapacidad', 'intelectual grave'),
+(7, 'NEE-Derivadas de discapacidad', 'visual'),
+(8, 'NEE-Derivadas de discapacidad', 'pluridiscapacidad'),
+(9, 'NEE-No asociadas a discapacidad', 'sin especificar'),
+(10, 'NEE-No asociadas a discapacidad', 'trastornos del espectro del autismo'),
+(11, 'NEE-No asociadas a discapacidad', 'trastornos graves de conducta/personalidad derivados de problemas de salud mental.'),
+(12, 'NEE-No asociadas a discapacidad', 'trastornos graves de la comunicación y del lenguaje'),
+(13, 'NEE-No asociadas a discapacidad', 'TEL graves'),
+(14, 'NEE-No asociadas a discapacidad', 'retrasos severos del lenguaje'),
+(15, 'NEE-No asociadas a discapacidad', 'disfasias'),
+(16, 'Retraso madurativo', 'sin especificar'),
+(17, 'Trastornos del desarrollo del lenguaje y la comunicación', 'sin especificar'),
+(18, 'Trastornos del desarrollo del lenguaje y la comunicación', 'dificultades leves o moderada en la comprensión o la producción (expresión)'),
+(19, 'Trastornos del desarrollo del lenguaje y la comunicación', 'dificultades leves o moderada en la producción'),
+(20, 'Trastornos del desarrollo del lenguaje y la comunicación', 'dificultades leves o moderada en la expresión'),
+(21, 'Trastornos del desarrollo del lenguaje y la comunicación', 'dificultades leves o moderada por trastorno fonológico'),
+(22, 'Trastornos del desarrollo del lenguaje y la comunicación', 'dificultades leves o moderada en la fluidez'),
+(23, 'Trastornos del desarrollo del lenguaje y la comunicación', 'dificultades leves o moderada en la comunicación social'),
+(24, 'Trastornos del desarrollo del lenguaje y la comunicación', 'dificultades leves o moderada en el uso del lenguaje por trastorno pragmático'),
+(25, 'Trastornos de atención', 'sin especificar'),
+(26, 'Trastornos de atención', 'asociadas al funcionamiento ejecutivo'),
+(27, 'Trastornos de atención', 'dificultades de aprendizaje asociadas a la atención'),
+(28, 'Trastornos de atención', 'asociadas a hiperactividad'),
+(29, 'Trastornos de atención', 'impulsividad'),
+(30, 'Trastornos de atención', 'atención e impulsividad'),
+(31, 'Trastornos de atención', 'atención e hiperactividad'),
+(32, 'Trastornos de atención', 'atención y funciones ejecutivas'),
+(33, 'Trastornos de atención', 'impulsividad e hiperactividad'),
+(34, 'Trastornos de atención', 'atención, impulsividad e hiperactividad'),
+(35, 'Trastornos de atención', 'funciones ejecutivas, impulsividad e hiperactividad'),
+(36, 'Trastornos del aprendizaje', 'sin especificar'),
+(37, 'Trastornos del aprendizaje', 'dificultad en la lectura'),
+(38, 'Trastornos del aprendizaje', 'dislexia'),
+(39, 'Trastornos del aprendizaje', 'dificultad en la expresión escrita'),
+(40, 'Trastornos del aprendizaje', 'disgrafía'),
+(41, 'Trastornos del aprendizaje', 'disortografía'),
+(42, 'Trastornos del aprendizaje', 'disgrafía/ y disortografía'),
+(43, 'Trastornos del aprendizaje', 'dificultad matemática'),
+(44, 'Trastornos del aprendizaje', 'discalculia'),
+(45, 'Trastornos del aprendizaje', 'dificultad en la adquisición y uso de rutinas y habilidades procedimentales-no verbales derivadas de trastorno del aprendizaje no verbal (TANV)'),
+(46, 'Trastornos del aprendizaje', 'dispraxia'),
+(47, 'Trastornos del aprendizaje', 'trastorno de la coordinación motriz'),
+(48, 'Trastornos del aprendizaje', 'inteligencia límite'),
+(49, 'Desconocimiento grave de la lengua', 'sin especificar'),
+(50, 'Desconocimiento grave de la lengua', 'recibe apoyo complementario sin ser de incorporación tardía'),
+(51, 'Con vulnerabilidad y con desfase', 'sin especificar'),
+(52, 'Con vulnerabilidad y con desfase', 'violencia de género, factores geográficos, étnicos o por experiencias adversas'),
+(53, 'Con vulnerabilidad y con desfase', 'factores económicos.'),
+(54, 'Con vulnerabilidad y con desfase', 'razones culturales.'),
+(55, 'Con vulnerabilidad y con desfase', 'razones sociales.'),
+(56, 'Con vulnerabilidad y con desfase', 'factores étnicos.'),
+(57, 'Con vulnerabilidad y con desfase', 'situación étnica.'),
+(58, 'Con vulnerabilidad y con desfase', 'por experiencias adversas en la infancia (EAI).'),
+(59, 'Altas capacidades intelectuales', 'sin especificar'),
+(60, 'Altas capacidades intelectuales', 'precoz'),
+(61, 'Altas capacidades intelectuales', 'sobredotación'),
+(62, 'Altas capacidades intelectuales', 'talento complejo ccadémico'),
+(63, 'Altas capacidades intelectuales', 'talento complejo académico con creatividad superior o igual a 50'),
+(64, 'Altas capacidades intelectuales', 'talento complejo académico con creatividad inferior a 50'),
+(65, 'Altas capacidades intelectuales', 'talento complejo artístico figurativo'),
+(66, 'Altas capacidades intelectuales', 'talento complejo académico y uno o más talentos simples'),
+(67, 'Altas capacidades intelectuales', 'talento complejo artístico figurativo y uno o más talentos simples'),
+(68, 'Altas capacidades intelectuales', 'dos talentos simples'),
+(69, 'Altas capacidades intelectuales', 'talento simple lógico'),
+(70, 'Altas capacidades intelectales', 'talento simple verbal'),
+(71, 'Altas capacidades intelectuales', 'talento simple matemático'),
+(72, 'Altas capacidades intelectuales', 'talento simple creativo'),
+(73, 'Altas capacidades intelectuales', 'talento simple espacial'),
+(74, 'Altas capacidades intelectuales', 'talento simple mecánico'),
+(75, 'Altas capacidades intelectuales', 'talento simple sin especificar'),
+(76, 'Integración tardía al sistema', 'sin especificar'),
+(77, 'Integración tardía al sistema', 'escolarizado en un curso inferior por desfase de dos cursos o más'),
+(78, 'Integración tardía al sistema', 'recibe atención'),
+(79, 'Condiciones personales o historia escolar', 'sin especificar'),
+(80, 'Condiciones personales o historia escolar', 'condiciones personales'),
+(81, 'Condiciones personales o historia escolar', 'hospitalización'),
+(82, 'Condiciones personales o historia escolar', 'larga convalecencia'),
+(83, 'Condiciones personales o historia escolar', 'riesgo de abandono escolar.'),
+(84, 'Condiciones personales o historia escolar', 'situación medica señalada por SMS'),
+(85, 'Condiciones personales o historia escolar', 'ideas autoesivas');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `usuarios`
 --
 
@@ -1123,20 +1368,29 @@ CREATE TABLE `usuarios` (
   `nombre` varchar(55) NOT NULL,
   `progreso` int(11) DEFAULT 0,
   `cod_centro` varchar(20) NOT NULL,
-  `rol` enum('Tutor','Director') NOT NULL DEFAULT 'Tutor'
+  `rol` enum('Tutor','Director') NOT NULL DEFAULT 'Tutor',
+  `apellidos` varchar(100) DEFAULT NULL,
+  `observaciones` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id_user`, `email`, `password`, `nombre`, `progreso`, `cod_centro`, `rol`) VALUES
-(4, 'carlosnicort@gmail.com', '$2y$12$cDJMoAn/YfEUXKouNJNah.NdMPmxVeOyckjD/ZuGGSV8VSFqmNJqq', 'Carlos', 1, '', 'Tutor'),
-(5, 'carnifra@gmail.com', '$2y$12$qYyvj4RRvPZUU97pRPh4qu/V2H6.K9sm6e2jeVOqN33AItpDyYi5y', 'CarlosLuis', 1, '', 'Tutor');
+INSERT INTO `usuarios` (`id_user`, `email`, `password`, `nombre`, `progreso`, `cod_centro`, `rol`, `apellidos`, `observaciones`) VALUES
+(1, 'carlosnicort@gmail.com', '$2y$10$Hd1mgEoFUMF.7guV0YBpkORazqUpDXyyiSMsz9ZfqiHq8uZCS/xr.', 'Carlos', 0, '30000377', 'Tutor', 'Ortuño', ''),
+(2, 'figosipituno@gmail.com', '$2y$10$87Kela9/.aGyD8aUstpaDuOPxfHWLVJ25CjXDvzs/GrD/J3hzNwvy', '2', 0, '30000213', 'Director', '2', ''),
+(9, '1@1.com', '$2y$10$SJ3bqERyJRi/KjTH1nO65.K.wDOGluLjarIQg4n/y2sjI4UszRFCC', '1', 0, '30000389', 'Director', '1', '1');
 
 --
 -- Índices para tablas volcadas
 --
+
+--
+-- Indices de la tabla `progreso`
+--
+ALTER TABLE `progreso`
+  ADD PRIMARY KEY (`id_progreso`);
 
 --
 -- Indices de la tabla `tidua1_1`
@@ -1196,12 +1450,20 @@ ALTER TABLE `tidua9_1`
 -- Indices de la tabla `ti_alu1`
 --
 ALTER TABLE `ti_alu1`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id_alu`),
+  ADD UNIQUE KEY `id_alu` (`id_alu`),
+  ADD KEY `idx_grupo` (`cod_grupo`);
 
 --
 -- Indices de la tabla `ti_gr1`
 --
 ALTER TABLE `ti_gr1`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `ti_perfiles`
+--
+ALTER TABLE `ti_perfiles`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1256,6 +1518,12 @@ ALTER TABLE `ttprev0`
   ADD UNIQUE KEY `id_txt` (`id_txt`);
 
 --
+-- Indices de la tabla `tt_perfiles_extras`
+--
+ALTER TABLE `tt_perfiles_extras`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
@@ -1268,22 +1536,28 @@ ALTER TABLE `usuarios`
 --
 
 --
--- AUTO_INCREMENT de la tabla `ti_alu1`
+-- AUTO_INCREMENT de la tabla `progreso`
 --
-ALTER TABLE `ti_alu1`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `progreso`
+  MODIFY `id_progreso` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `ti_gr1`
 --
 ALTER TABLE `ti_gr1`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+
+--
+-- AUTO_INCREMENT de la tabla `ti_perfiles`
+--
+ALTER TABLE `ti_perfiles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
 
 --
 -- AUTO_INCREMENT de la tabla `ti_tipologia`
 --
 ALTER TABLE `ti_tipologia`
-  MODIFY `id_alu` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_alu` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `ttmatop`
@@ -1298,10 +1572,16 @@ ALTER TABLE `ttprev0`
   MODIFY `id_txt` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
+-- AUTO_INCREMENT de la tabla `tt_perfiles_extras`
+--
+ALTER TABLE `tt_perfiles_extras`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
+
+--
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_user` int(200) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_user` int(200) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
