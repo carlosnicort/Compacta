@@ -105,62 +105,73 @@ async function cargarGrupos() {
 
             const linkTipo = alumno.tipo_creado ? 'Ver/Editar Perfil' : 'Crear Tipo';
 
-            trAlumno.innerHTML = `
-				<td colspan="5">&nbsp;&nbsp;&nbsp;${alumno.id_alu}</td>
-                <td>Id Registro: ${alumno.id_user || ''}</td>
-                <td>
-                    <a href="#" class="set-alumno" data-index="${i}" data-codgrupo="${g.cod_grupo}" data-action="tipo">
-                        ${linkTipo}
-                    </a>
-                    | 
-                    <a href="#" class="set-alumno" data-index="${i}" data-codgrupo="${g.cod_grupo}" data-action="materias">
-                        Asignar Materias
-                    </a>
-                </td>
-            `;
+trAlumno.innerHTML = `
+    <td>${alumno.id_alu}</td>
+    <td>${alumno.id_user || ''}</td>
+    <td>
+        <a href="#" class="set-alumno" 
+           data-index="${i}" 
+           data-codgrupo="${g.cod_grupo}" 
+           data-action="tipo">
+           ${linkTipo}
+        </a>
+    </td>
+    <td>
+        <a href="#" class="set-alumno" 
+           data-index="${i}" 
+           data-codgrupo="${g.cod_grupo}" 
+           data-idalu="${alumno.id_alu}" 
+           data-action="materias">
+           Asignar Materias
+        </a>
+    </td>
+`;
             cuerpo.appendChild(trAlumno);
         }
     }
 
     // ----------------------------
-    // JS para manejar click en alumnos
+    // Delegación de eventos: click en cualquier .set-alumno
     // ----------------------------
-    document.querySelectorAll('.set-alumno').forEach(el => {
-        el.addEventListener('click', async e => {
-            e.preventDefault();
-            const index = el.dataset.index;
-            const cod_grupo = el.dataset.codgrupo;
-            const action = el.dataset.action;
+    document.getElementById('cuerpoTabla').addEventListener('click', async e => {
+        const el = e.target.closest('.set-alumno');
+        if (!el) return;
 
-            try {	
-                const resp = await fetch('../../backend/session/set_current.php', {
-                    method: 'POST',
-                    body: JSON.stringify({ index, cod_grupo }),
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'same-origin'
-                });
-                const data = await resp.json();
-                if (data.success) {
-                    // Redirige según acción
-                    if (action === 'tipo') {
-                        window.location.href = '../../frontend/tipo/create_tipo.php';
-                    } else if (action === 'materias') {
-                        window.location.href = '../materias/asignar_mat.php';
-                    }
-                } else {
-                    alert("Error al fijar el alumno: " + data.message);
+        e.preventDefault();
+        const index = el.dataset.index;
+        const cod_grupo = el.dataset.codgrupo;
+        const action = el.dataset.action;
+        const id_alu = el.dataset.idalu;
+
+        try {	
+            const resp = await fetch('../../backend/session/set_current.php', {
+                method: 'POST',
+                body: JSON.stringify({ index, cod_grupo, id_alu }),
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin'
+            });
+            const data = await resp.json();
+            if (data.success) {
+                // Redirige según acción
+                if (action === 'tipo') {
+                    window.location.href = '../../frontend/tipo/create_tipo.php';
+                } else if (action === 'materias') {
+                    window.location.href = '../materias/asignar_mat.php';
                 }
-            } catch (err) {
-                alert("Error de conexión");
-                console.error(err);
+            } else {
+                alert("Error al fijar el alumno: " + data.message);
             }
-        });
+        } catch (err) {
+            alert("Error de conexión");
+            console.error(err);
+        }
     });
 }
 
 // Carga inicial
 cargarGrupos();
 </script>
+
 
 
 

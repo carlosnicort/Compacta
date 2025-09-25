@@ -14,42 +14,49 @@ try {
         exit;
     }
 
-    $cod_grupo = $input['cod_grupo'] ?? null;
-    $id_user   = $input['id_user'] ?? null;
-    $index     = $input['index'] ?? null;
+    $cod_nivel = $input['cod_nivel'] ?? null; // ejemplo: INF1, PRI6, ESO4
+    $id_alu    = $input['id_alu'] ?? null;
 
-    if (!$cod_grupo || !$id_user) {
-        echo json_encode(['success' => false, 'message' => 'Faltan parámetros obligatorios']);
+    if (!$cod_nivel || !$id_alu) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Faltan parámetros obligatorios: cod_nivel o id_alu'
+        ]);
         exit;
     }
 
-    // 1. Obtener materias optativas asociadas al grupo
+    // 1. Obtener materias del nivel (comunes y optativas)
     $stmt = $pdo->prepare("
-        SELECT m.cod_materia, m.nombre
-        FROM ti_materias m
-        INNER JOIN ti_grupo_materias gm ON gm.cod_materia = m.cod_materia
-        WHERE gm.cod_grupo = ? AND gm.tipo = 'optativa'
+        SELECT cod_materia, nombre, tipo, bloque, seleccion_min, seleccion_max, obligatoria, descripcion
+        FROM ti_materias
+        WHERE FIND_IN_SET(?, niveles)
+        ORDER BY bloque, orden
     ");
-    $stmt->execute([$cod_grupo]);
+    $stmt->execute([$cod_nivel]);
     $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // 2. Obtener materias ya asignadas al alumno
     $stmt2 = $pdo->prepare("
         SELECT cod_materia
         FROM ti_asignaciones
-        WHERE id_user = ? AND cod_grupo = ?
+        WHERE id_alu = ?
     ");
-    $stmt2->execute([$id_user, $cod_grupo]);
+    $stmt2->execute([$id_alu]);
     $asignadas = $stmt2->fetchAll(PDO::FETCH_COLUMN);
 
-    // 3. Construir respuesta
+    // 3. Marcar asignadas
     foreach ($materias as &$m) {
         $m['asignada'] = in_array($m['cod_materia'], $asignadas);
     }
 
+    // 4. Separar comunes y optativas para el frontend
+    $comunes   = array_values(array_filter($materias, fn($m) => $m['tipo'] === 'comun'));
+    $optativas = array_values(array_filter($materias, fn($m) => $m['tipo'] === 'optativa'));
+
     echo json_encode([
-        'success' => true,
-        'materias' => $materias
+        'success'   => true,
+        'comunes'   => $comunes,
+        'optativas' => $optativas
     ]);
 
 } catch (Exception $e) {

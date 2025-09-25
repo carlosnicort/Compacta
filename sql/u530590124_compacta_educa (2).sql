@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 25-09-2025 a las 15:30:38
+-- Tiempo de generación: 25-09-2025 a las 22:14:14
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -152,6 +152,140 @@ CREATE TABLE `tidua1_1` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `tidua2_1`
+--
+
+CREATE TABLE `tidua2_1` (
+  `id_alum` int(11) NOT NULL,
+  `T1` varchar(20) DEFAULT NULL,
+  `T2` varchar(20) DEFAULT NULL,
+  `T3` varchar(20) DEFAULT NULL,
+  `T4` varchar(20) DEFAULT NULL,
+  `T5` varchar(20) DEFAULT NULL,
+  `T6` varchar(20) DEFAULT NULL,
+  `T7` varchar(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tidua3_1`
+--
+
+CREATE TABLE `tidua3_1` (
+  `id_alum` int(11) NOT NULL,
+  `T1` varchar(20) DEFAULT NULL,
+  `T2` varchar(20) DEFAULT NULL,
+  `T3` varchar(20) DEFAULT NULL,
+  `T4` varchar(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tidua4_1`
+--
+
+CREATE TABLE `tidua4_1` (
+  `id_alum` int(11) NOT NULL,
+  `T1` varchar(20) DEFAULT NULL,
+  `T2` varchar(20) DEFAULT NULL,
+  `T3` varchar(20) DEFAULT NULL,
+  `T4` varchar(20) DEFAULT NULL,
+  `T5` varchar(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tidua5_1`
+--
+
+CREATE TABLE `tidua5_1` (
+  `id_alum` int(11) NOT NULL,
+  `T1` varchar(20) DEFAULT NULL,
+  `T2` varchar(20) DEFAULT NULL,
+  `T3` varchar(20) DEFAULT NULL,
+  `T4` varchar(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tidua6_1`
+--
+
+CREATE TABLE `tidua6_1` (
+  `id_alum` int(11) NOT NULL,
+  `T1` varchar(20) DEFAULT NULL,
+  `T2` varchar(20) DEFAULT NULL,
+  `T3` varchar(20) DEFAULT NULL,
+  `T4` varchar(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tidua7_1`
+--
+
+CREATE TABLE `tidua7_1` (
+  `id_alum` int(11) NOT NULL,
+  `T1` varchar(20) DEFAULT NULL,
+  `T2` varchar(20) DEFAULT NULL,
+  `T3` varchar(20) DEFAULT NULL,
+  `T4` varchar(20) DEFAULT NULL,
+  `T5` varchar(20) DEFAULT NULL,
+  `T6` varchar(20) DEFAULT NULL,
+  `T7` varchar(20) DEFAULT NULL,
+  `T8` varchar(20) DEFAULT NULL,
+  `T9` varchar(20) DEFAULT NULL,
+  `T10` varchar(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tidua8_1`
+--
+
+CREATE TABLE `tidua8_1` (
+  `id_alum` int(11) NOT NULL,
+  `T1` varchar(20) DEFAULT NULL,
+  `T2` varchar(50) DEFAULT NULL,
+  `T3` varchar(50) DEFAULT NULL,
+  `T4` varchar(20) DEFAULT NULL,
+  `T5` varchar(20) DEFAULT NULL,
+  `T6` varchar(20) DEFAULT NULL,
+  `T7` varchar(20) DEFAULT NULL,
+  `T8` varchar(50) DEFAULT NULL,
+  `T9` varchar(20) DEFAULT NULL,
+  `T10` varchar(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tidua9_1`
+--
+
+CREATE TABLE `tidua9_1` (
+  `id_alum` int(11) NOT NULL,
+  `T1` varchar(20) DEFAULT NULL,
+  `T2` varchar(50) DEFAULT NULL,
+  `T3` varchar(50) DEFAULT NULL,
+  `T4` varchar(20) DEFAULT NULL,
+  `T5` varchar(20) DEFAULT NULL,
+  `T6` varchar(20) DEFAULT NULL,
+  `T7` varchar(20) DEFAULT NULL,
+  `T8` varchar(50) DEFAULT NULL,
+  `T9` varchar(20) DEFAULT NULL,
+  `T10` varchar(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `ti_alu1`
 --
 
@@ -184,8 +318,9 @@ INSERT INTO `ti_alu1` (`id_alu`, `cod_centro`, `cod_grupo`, `id_user`, `Tipo1`, 
 ('30000213ESO3C1', '30000213', 'ESO3C', 2, 0, 0, '0', '0', '0', '0', '0', '2025-09-24 16:55:29'),
 ('30000213ESO3C2', '30000213', 'ESO3C', 2, 1, 0, 'NEE-Derivadas de discapacidad', 'Intelectual moderada', '0', '0', '0', '2025-09-24 16:55:44'),
 ('30000213ESO3C3', '30000213', 'ESO3C', 2, 0, 0, '0', '0', '0', '0', '0', '2025-09-24 17:16:34'),
-('30000213INF1A1', '30000213', 'INF1A', 2, 1, 1, 'Altas capacidades intelectuales', 'Talento simple sin especificar', 'Condiciones personales o historia escolar', 'Hospitalización', 'erty', '2025-09-24 17:16:25'),
-('30000213INF3A1', '30000213', 'INF3A', 0, 1, 1, 'TDAH', 'Leve', 'Dislexia', 'Comprensión', '', '2025-09-22 23:27:35');
+('30000213INF1A1', '30000213', 'INF1A', 2, 1, 0, 'Altas capacidades intelectuales', 'Talento complejo académico', '0', '0', '0', '2025-09-24 17:16:25'),
+('30000213INF3A1', '30000213', 'INF3A', 0, 1, 1, 'TDAH', 'Leve', 'Dislexia', 'Comprensión', '', '2025-09-22 23:27:35'),
+('30000377CFM2A1', '30000377', 'CFM2A', 1, 1, 0, 'Trastornos del aprendizaje', 'Discalculia', 'Desconocimiento grave de la lengua', 'Recibe apoyo complementario sin ser de incorporaci', 'sdolñw', '2025-09-24 17:21:48');
 
 -- --------------------------------------------------------
 
@@ -194,12 +329,23 @@ INSERT INTO `ti_alu1` (`id_alu`, `cod_centro`, `cod_grupo`, `id_user`, `Tipo1`, 
 --
 
 CREATE TABLE `ti_asignaciones` (
-  `id` int(11) NOT NULL,
-  `id_alu` int(11) NOT NULL,
-  `cod_grupo` varchar(50) NOT NULL,
-  `id_materia` int(11) NOT NULL,
-  `grupo_eleccion` varchar(50) NOT NULL
+  `id_asignacion` int(10) UNSIGNED NOT NULL,
+  `id_alu` varchar(50) NOT NULL,
+  `cod_grupo` varchar(20) NOT NULL,
+  `cod_materia` varchar(50) NOT NULL,
+  `fecha_asignacion` timestamp NOT NULL DEFAULT current_timestamp(),
+  `usuario_asignador` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `ti_asignaciones`
+--
+
+INSERT INTO `ti_asignaciones` (`id_asignacion`, `id_alu`, `cod_grupo`, `cod_materia`, `fecha_asignacion`, `usuario_asignador`) VALUES
+(3, '30000213INF1A1', 'INF1A', 'OPT_2', '2025-09-25 19:56:38', NULL),
+(4, '30000213BAE1D1', 'BAE1D', 'OPT_36', '2025-09-25 19:58:46', NULL),
+(5, '30000213BAE1D1', 'BAE1D', 'OPT_78', '2025-09-25 19:58:46', NULL),
+(6, '30000213BAE1D1', 'BAE1D', 'OPT_88', '2025-09-25 19:58:46', NULL);
 
 -- --------------------------------------------------------
 
@@ -240,13 +386,147 @@ INSERT INTO `ti_gr1` (`id`, `id_user`, `cod_centro`, `Etapa`, `Modalidad`, `Curs
 --
 
 CREATE TABLE `ti_materias` (
-  `id_materia` int(11) NOT NULL,
-  `nombre` varchar(255) NOT NULL,
-  `codigo` varchar(50) DEFAULT NULL,
-  `regla_tipo` varchar(255) NOT NULL,
-  `activo` tinyint(1) DEFAULT 1,
-  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp()
+  `cod_materia` varchar(50) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `tipo` enum('comun','optativa') NOT NULL,
+  `niveles` varchar(100) NOT NULL,
+  `bloque` varchar(50) DEFAULT NULL,
+  `seleccion_min` int(11) DEFAULT NULL,
+  `seleccion_max` int(11) DEFAULT NULL,
+  `obligatoria` tinyint(1) DEFAULT 0,
+  `orden` int(11) DEFAULT NULL,
+  `descripcion` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `ti_materias`
+--
+
+INSERT INTO `ti_materias` (`cod_materia`, `nombre`, `tipo`, `niveles`, `bloque`, `seleccion_min`, `seleccion_max`, `obligatoria`, `orden`, `descripcion`) VALUES
+('Asig_1', 'Crecimiento en Armonía', 'comun', 'INF1,INF2,INF3', NULL, NULL, NULL, 1, 1, 'Asignatura común INF'),
+('Asig_10', 'Matemáticas', 'comun', 'PRI1,PRI2,PRI3,PRI4,PRI5,PRI6,ESO1,ESO2,ESO3', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI1-6'),
+('Asig_11', 'Música y Danza', 'comun', 'PRI1,PRI2,PRI3,PRI4,PRI5,PRI6', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI1-6'),
+('Asig_12', 'Profundización Educativa', 'comun', 'PRI1,PRI2,PRI3,PRI4,PRI5', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI1-5'),
+('Asig_13', 'Valores Cívicos y éticos', 'comun', 'PRI6', NULL, NULL, NULL, 1, 3, 'Asignatura PRI6'),
+('Asig_14', 'Tecnología y Digitalización', 'comun', 'ESO1,ESO3', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_15', 'Ámbito Socio-lingüistico', 'comun', 'INF1,INF2,INF3', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_16', 'Música', 'comun', 'DIV1,DIV2,ESO2,ESO3', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_17', 'Ámbito Científico-Tecnológico', 'comun', 'DIV1,DIV2', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_18', 'Filosofía', 'comun', 'BCT1,BHS1,BAP1,BAE1,BGR1', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_19', 'Historia de la Filosofía', 'comun', 'BCT2,BHS2,BAP2,BAE2,BGR2', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_2', 'Descubrimiento y Exploración del Entorno', 'comun', 'INF1,INF2,INF3', NULL, NULL, NULL, 1, 2, 'Asignatura común INF'),
+('Asig_20', 'Ámbito de Comunicación y Ciencias Sociales', 'comun', 'CFB1,CFB2', NULL, NULL, NULL, 1, 3, 'Asignatura común CFB'),
+('Asig_21', 'Ámbito de Ciencias Aplicadas', 'comun', 'CFB1,CFB2', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_22', '1er Modulo Profesional Asociado', 'comun', 'CFB1,CFB2,CFM1,CFM2,CFS1,CFS2', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_23', '2º Modulo Profesional Asociado', 'comun', 'CFB1,CFB2,CFM1,CFM2,CFS1,CFS2', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_24', '3er Modulo Profesional Asociado', 'comun', 'CFB1,CFB2,CFM1,CFM2,CFS1,CFS2', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_25', '4º Modulo Profesional Asociado', 'comun', 'CFB1,CFB2,CFM1,CFM2,CFS1,CFS2', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_26', '5º Modulo Profesional Asociado', 'comun', 'CFB1,CFB2,CFM1,CFM2,CFS1,CFS2', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_27', '6º Modulo Profesional Asociado', 'comun', 'CFB1,CFB2,CFM1,CFM2,CFS1,CFS2', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_28', '7º Modulo Profesional Asociado', 'comun', 'CFM1,CFM2,CFS1,CFS2', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_29', '8º Modulo Profesional Asociado', 'comun', 'CFM1,CFM2,CFS1,CFS2', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_3', 'Comunicación y Representación de la Realidad', 'comun', 'INF1,INF2,INF3', NULL, NULL, NULL, 1, 3, 'Asignatura común INF'),
+('Asig_30', '9º Modulo Profesional Asociado', 'comun', 'CFM1,CFM2,CFS1,CFS2', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_31', 'Proyecto Intermodular', 'comun', 'CFB1,CFB2', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_32', 'Educación en Valores Cívicos y Éticos', 'comun', 'ESO2', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_33', 'Educación Plástica, Visual y Audiovisual', 'comun', 'ESO2', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_34', 'Formación y Orientación Profesional y Personal', 'comun', 'DIV2', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_35', 'Historia de España', 'comun', 'BCT2,BHS2,BAP2,BAE2,BGR2', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI'),
+('Asig_4', 'Ciencias de la Naturaleza', 'comun', 'PRI1,PRI2,PRI3,PRI4,PRI5,PRI6', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI1-6'),
+('Asig_5', 'Ciencias Sociales', 'comun', 'PRI1,PRI2,PRI3,PRI4,PRI5,PRI6', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI1-6'),
+('Asig_6', 'Educación Física', 'comun', 'PRI1,PRI2,PRI3,PRI4,PRI5,PRI6,ESO1,ESO2,ESO3,ESO4,DIV1,DIV2,BCT1,BHS1,BAP1,BAE1,BGR1', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI1-6'),
+('Asig_7', 'Educación Plástica y Visual', 'comun', 'PRI1,PRI2,PRI3,PRI4,PRI5,PRI6', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI1-6'),
+('Asig_8', 'Lengua Castellana y Literatura', 'comun', 'PRI1,PRI2,PRI3,PRI4,PRI5,PRI6,ESO1,ESO2,ESO3,ESO4,BCT1,BHS1,BAP1,BAE1,BGR1,BCT2,BHS2,BAP2,BAE2,BGR2', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI1-6'),
+('Asig_9', 'Lengua Extranjera', 'comun', 'PRI1,PRI2,PRI3,PRI4,PRI5,PRI6,ESO1,ESO2,ESO3,ESO4,DIV1,DIV2,BCT1,BHS1,BAP1,BAE1,BGR1,BCT2,BHS2,BAP2,', NULL, NULL, NULL, 1, 3, 'Asignatura común PRI1-6'),
+('OPT_1', 'Religión', 'optativa', 'INF1,INF2,INF3,PRI1,PRI2,PRI3,PRI4,PRI5,PRI6,ESO1,ESO2,ESO3,ESO4,DIV1,DIV2,CFM1,CFM2,CFB1,CFB2,CFS1,', 'B_REL', 1, 1, 1, 1, 'Asignatura optativa Religión'),
+('OPT_10', 'Cultura clásica', 'optativa', 'DIV1,ESO3', 'B_ART', 1, 1, 1, 3, 'Asignatura optativa ART'),
+('OPT_11', 'Digitalización Creativa', 'optativa', 'DIV1,ESO3', 'B_ART', 1, 1, 1, 4, 'Asignatura optativa ART'),
+('OPT_12', 'Emprendimiento Personal y Social', 'optativa', 'DIV1,ESO3', 'B_ART', 1, 1, 1, 5, 'Asignatura optativa ART'),
+('OPT_13', 'Segunda Lengua Extranjera', 'optativa', 'DIV1,ESO3', 'B_ART', 1, 1, 1, 6, 'Asignatura optativa ART'),
+('OPT_14', 'Lengua de Signos Española', 'optativa', 'DIV1,ESO3,ESO4,DIV2', 'B_ART', 1, 1, 1, 7, 'Asignatura optativa ART'),
+('OPT_15', 'Creaciones Audiovisuales y Plasticas', 'optativa', 'DIV2,ESO4', 'B_ART', 1, 1, 1, 1, 'Asignatura optativa ART'),
+('OPT_16', 'Creaciones Escénico-Musicales', 'optativa', 'DIV2,ESO4', 'B_ART', 1, 1, 1, 2, 'Asignatura optativa ART'),
+('OPT_17', 'Educación Financiera y Consumo Responsable', 'optativa', 'DIV2,ESO4', 'B_ART', 1, 1, 1, 3, 'Asignatura optativa ART'),
+('OPT_18', 'El mundo clásico: Lenguaje, Historia y Patrimonio', 'optativa', 'DIV2,ESO4', 'B_ART', 1, 1, 1, 4, 'Asignatura optativa ART'),
+('OPT_19', 'Filosofía, Retórica y Argumentación', 'optativa', 'DIV2,ESO4', 'B_ART', 1, 1, 1, 5, 'Asignatura optativa ART'),
+('OPT_2', 'Atención Educativa', 'optativa', 'INF1,INF2,INF3,PRI1,PRI2,PRI3,PRI4,PRI5,PRI6,ESO1,ESO2,ESO3,ESO4,DIV1,DIV2,CFM1,CFM2,CFB1,CFB2,CFS1,', 'B_REL', 1, 1, 1, 2, 'Asignatura optativa Atención Educativa'),
+('OPT_20', 'Investigación Científica e Innovación Tecnológica', 'optativa', 'DIV2,ESO4', 'B_ART', 1, 1, 1, 6, 'Asignatura optativa ART'),
+('OPT_21', 'Biología y Geología', 'optativa', 'ESO4', 'B_ESO', 3, 3, 1, 1, 'Asignatura optativa ESO'),
+('OPT_22', 'Digitalización', 'optativa', 'ESO4', 'B_ESO', 3, 3, 1, 2, 'Asignatura optativa ESO'),
+('OPT_23', 'Economía y Emprendimiento', 'optativa', 'ESO4', 'B_ESO', 3, 3, 1, 3, 'Asignatura optativa ESO'),
+('OPT_24', 'Expresión Artística', 'optativa', 'ESO4', 'B_ESO', 3, 3, 1, 4, 'Asignatura optativa ESO'),
+('OPT_25', 'Física y Química', 'optativa', 'ESO4', 'B_ESO', 3, 3, 1, 5, 'Asignatura optativa ESO'),
+('OPT_26', 'Formación y Orientación Personal y Profesional', 'optativa', 'ESO4', 'B_ESO', 3, 3, 1, 6, 'Asignatura optativa ESO'),
+('OPT_27', 'Latín', 'optativa', 'ESO4', 'B_ESO', 3, 3, 1, 7, 'Asignatura optativa ESO'),
+('OPT_28', 'Música', 'optativa', 'ESO4', 'B_ESO', 3, 3, 1, 8, 'Asignatura optativa ESO'),
+('OPT_29', 'Segunda Lengua Extranjera', 'optativa', 'ESO4', 'B_ESO', 3, 3, 1, 9, 'Asignatura optativa ESO'),
+('OPT_3', 'Matemáticas A', 'optativa', 'ESO4', 'B_MAT', 1, 1, 1, 1, 'Asignatura optativa MAT ESO4'),
+('OPT_30', 'Tecnología', 'optativa', 'ESO4', 'B_ESO', 3, 3, 1, 10, 'Asignatura optativa ESO'),
+('OPT_31', 'Matemáticas', 'optativa', 'BCT1,BCT2', 'B_BACH1', 1, 1, 1, 1, 'Asignatura optativa BACH'),
+('OPT_32', 'Matemáticas Generales', 'optativa', 'BGR1', 'B_BACH1', 1, 1, 1, 2, 'Asignatura optativa BACH'),
+('OPT_33', 'Matemáticas Aplicadas a las CCSS', 'optativa', 'BCT2,BHS1,BHS2', 'B_BACH1', 1, 1, 1, 3, 'Asignatura optativa BACH'),
+('OPT_34', 'Latin', 'optativa', 'BHS1,BHS2', 'B_BACH1', 1, 1, 1, 4, 'Asignatura optativa BACH'),
+('OPT_35', 'Análisis Musical', 'optativa', 'BAE1,BAE2', 'B_BACH1', 1, 1, 1, 5, 'Asignatura optativa BACH'),
+('OPT_36', 'Artes Escénicas', 'optativa', 'BAE1,BAE2', 'B_BACH1', 1, 1, 1, 6, 'Asignatura optativa BACH'),
+('OPT_37', 'Dibujo Artístico', 'optativa', 'BAP1,BAP2', 'B_BACH1', 1, 1, 1, 7, 'Asignatura optativa BACH'),
+('OPT_38', 'Ciencias Generales', 'optativa', 'BGR2', 'B_BACH1', 1, 1, 1, 8, 'Asignatura optativa BACH'),
+('OPT_39', 'Biología Geología y Ciencias Ambientales', 'optativa', 'BCT1', 'B_BACH2', 1, 1, 1, 1, 'Asignatura optativa BACH'),
+('OPT_4', 'Matemáticas B', 'optativa', 'ESO4', 'B_MAT', 1, 1, 1, 2, 'Asignatura optativa MAT ESO4'),
+('OPT_40', 'Biología', 'optativa', 'BCT2', 'B_BACH2', 1, 1, 1, 2, 'Asignatura optativa BACH'),
+('OPT_41', 'Dibujo Técnico', 'optativa', 'BCT1,BCT2', 'B_BACH2', 1, 1, 1, 3, 'Asignatura optativa BACH'),
+('OPT_42', 'Fisica y Química', 'optativa', 'BCT1', 'B_BACH2', 1, 1, 1, 4, 'Asignatura optativa BACH'),
+('OPT_43', 'Fisica', 'optativa', 'BCT2', 'B_BACH2', 1, 1, 1, 5, 'Asignatura optativa BACH'),
+('OPT_44', 'Química', 'optativa', 'BCT2', 'B_BACH2', 1, 1, 1, 5, 'Asignatura optativa BACH'),
+('OPT_45', 'Geología y Ciencas Ambientales', 'optativa', 'BCT2', 'B_BACH2', 1, 1, 1, 5, 'Asignatura optativa BACH'),
+('OPT_46', 'Tecnología e Ingeniería', 'optativa', 'BCT2', 'B_BACH2', 1, 1, 1, 6, 'Asignatura optativa BACH'),
+('OPT_47', 'Economía', 'optativa', 'BHS1', 'B_BACH2', 1, 1, 1, 7, 'Asignatura optativa BACH'),
+('OPT_48', 'Griego', 'optativa', 'BHS1,BHS2', 'B_BACH2', 1, 1, 1, 8, 'Asignatura optativa BACH'),
+('OPT_49', 'Literatura Universal', 'optativa', 'BHS1', 'B_BACH2', 1, 1, 1, 9, 'Asignatura optativa BACH'),
+('OPT_5', 'Segunda Lengua Extranjera', 'optativa', 'PRI5,PRI6,ESO1,ESO2', 'B_IDI', 1, 1, 1, 1, 'Asignatura optativa ESO4'),
+('OPT_50', 'Historia del Arte', 'optativa', 'BHS2', 'B_BACH2', 1, 1, 1, 10, 'Asignatura optativa BACH'),
+('OPT_51', 'Geografía', 'optativa', 'BHS2', 'B_BACH2', 1, 1, 1, 11, 'Asignatura optativa BACH'),
+('OPT_52', 'Latín', 'optativa', 'BHS1,BHS2', 'B_BACH2', 1, 1, 1, 12, 'Asignatura optativa BACH'),
+('OPT_53', 'Historia del Mundo ContemporáneoArte', 'optativa', 'BHS2', 'B_BACH2', 1, 1, 1, 13, 'Asignatura optativa BACH'),
+('OPT_54', 'Empresa y Diseño de Modelos de Negocios', 'optativa', 'BHS2', 'B_BACH2', 1, 1, 1, 14, 'Asignatura optativa BACH'),
+('OPT_55', 'Análisis Musical', 'optativa', 'BHS1,BHS2', 'B_BACH2', 1, 1, 1, 15, 'Asignatura optativa BACH'),
+('OPT_56', 'Artes Escénicas', 'optativa', 'BHS1,BHS2', 'B_BACH2', 1, 1, 1, 16, 'Asignatura optativa BACH'),
+('OPT_57', 'Cultura Audiovisual', 'optativa', 'BHS1,BAP1', 'B_BACH2', 1, 1, 1, 17, 'Asignatura optativa BACH'),
+('OPT_58', 'Coro y Técnica Vocal', 'optativa', 'BHS1,BHS2', 'B_BACH2', 1, 1, 1, 18, 'Asignatura optativa BACH'),
+('OPT_59', 'Lenguaje y Práctica Audiovisual', 'optativa', 'BHS1', 'B_BACH2', 1, 1, 1, 19, 'Asignatura optativa BACH'),
+('OPT_6', 'Refuerzo de la Competencia en Comunicación Lingüística', 'optativa', 'PRI5,PRI6,ESO1,ESO2', 'B_IDI', 1, 1, 1, 2, 'Asignatura optativa ESO4'),
+('OPT_60', 'Literatura Dramática', 'optativa', 'BHS2', 'B_BACH2', 1, 1, 1, 20, 'Asignatura optativa BACH'),
+('OPT_61', 'Historia de la Música y la Danza', 'optativa', 'BHS2', 'B_BACH2', 1, 1, 1, 20, 'Asignatura optativa BACH'),
+('OPT_62', 'Diseño', 'optativa', 'BAP2', 'B_BACH2', 1, 1, 1, 21, 'Asignatura optativa BACH'),
+('OPT_63', 'Dibujo Técnico Aplicado a las Artes Plásticas y al Diseño', 'optativa', 'BAP1,BAP2', 'B_BACH2', 1, 1, 1, 22, 'Asignatura optativa BACH'),
+('OPT_64', 'Imagen Digital', 'optativa', 'BAP2', 'B_BACH2', 1, 1, 1, 23, 'Asignatura optativa BACH'),
+('OPT_65', 'Proyectos Artísticos', 'optativa', 'BAP1', 'B_BACH2', 1, 1, 1, 24, 'Asignatura optativa BACH'),
+('OPT_66', 'Volumen', 'optativa', 'BAP1', 'B_BACH2', 1, 1, 1, 25, 'Asignatura optativa BACH'),
+('OPT_67', 'Fundamentos Artísticos', 'optativa', 'BAP2', 'B_BACH2', 1, 1, 1, 26, 'Asignatura optativa BACH'),
+('OPT_68', 'Técnicas de Expresión Gráfico-Plástica', 'optativa', 'BAP2', 'B_BACH2', 1, 1, 1, 27, 'Asignatura optativa BACH'),
+('OPT_69', 'Economía Emprendimiento y Actividad Empresarial', 'optativa', 'BGR1', 'B_BACH2', 1, 1, 1, 23, 'Asignatura optativa BACH'),
+('OPT_7', 'Lengua de signos Española', 'optativa', 'PRI5,PRI6,ESO1,ESO2', 'B_IDI', 1, 1, 1, 3, 'Asignatura optativa ESO4'),
+('OPT_70', 'Movimientos Culturales y Artísticos', 'optativa', 'BGR2', 'B_BACH2', 1, 1, 1, 24, 'Asignatura optativa BACH'),
+('OPT_71', '1X1', 'optativa', 'BAP1', 'B_BACH2', 1, 1, 1, 25, 'Asignatura optativa BACH'),
+('OPT_72', '1X2', 'optativa', 'BAP2', 'B_BACH2', 1, 1, 1, 26, 'Asignatura optativa BACH'),
+('OPT_73', '1X3', 'optativa', 'BAP2', 'B_BACH2', 1, 1, 1, 27, 'Asignatura optativa BACH'),
+('OPT_74', 'Anatomía Aplicada', 'optativa', 'BAP1,BAE1,BGR1,BHS1,BCT1', 'B_BACH3', 1, 2, 1, 1, 'Asignatura optativa BACH'),
+('OPT_75', 'Digitalización y Ofimática', 'optativa', 'BAP1,BAE1,BGR1,BHS1,BCT1', 'B_BACH3', 1, 2, 1, 2, 'Asignatura optativa BACH'),
+('OPT_76', 'Finanzas Responsables', 'optativa', 'BAP1,BAE1,BGR1,BHS1,BCT1', 'B_BACH3', 1, 2, 1, 3, 'Asignatura optativa BACH'),
+('OPT_77', 'Herencia y Mitología Clásicas', 'optativa', 'BAP1,BAE1,BGR1,BHS1,BCT1', 'B_BACH3', 1, 2, 1, 4, 'Asignatura optativa BACH'),
+('OPT_78', 'Música, Espectáculo y Comunicación', 'optativa', 'BAP1,BAE1,BGR1,BHS1,BCT1', 'B_BACH3', 1, 2, 1, 5, 'Asignatura optativa BACH'),
+('OPT_79', 'Digitalización y Programación', 'optativa', 'BAP2,BAE2,BGR2,BHS2,BCT2', 'B_BACH3', 1, 2, 1, 6, 'Asignatura optativa BACH'),
+('OPT_8', 'Artes Escénicas y Danza', 'optativa', 'DIV1,ESO3', 'B_ART', 1, 1, 1, 1, 'Asignatura optativa ART'),
+('OPT_80', 'Electrotécnia', 'optativa', 'BAP1,BAE1,BGR1,BHS1,BCT1', 'B_BACH3', 1, 2, 1, 7, 'Asignatura optativa BACH'),
+('OPT_81', 'Imagen Digital', 'optativa', 'BAP1,BAE1,BGR1,BHS1,BCT1', 'B_BACH3', 1, 2, 1, 8, 'Asignatura optativa BACH'),
+('OPT_82', 'Imagen y Sonido', 'optativa', 'BAP1,BAE1,BGR1,BHS1,BCT1', 'B_BACH3', 1, 2, 1, 9, 'Asignatura optativa BACH'),
+('OPT_83', 'Nuevos Medios Audiovisuales', 'optativa', 'BAP1,BAE1,BGR1,BHS1,BCT1', 'B_BACH3', 1, 2, 1, 10, 'Asignatura optativa BACH'),
+('OPT_84', 'Pervivencia Clásica y Mitología', 'optativa', 'BAP1,BAE1,BGR1,BHS1,BCT1', 'B_BACH3', 1, 2, 1, 11, 'Asignatura optativa BACH'),
+('OPT_85', 'Producción e Interpretación Musical', 'optativa', 'BAP1,BAE1,BGR1,BHS1,BCT1', 'B_BACH3', 1, 2, 1, 12, 'Asignatura optativa BACH'),
+('OPT_86', 'Psicología', 'optativa', 'BAP1,BAE1,BGR1,BHS1,BCT1', 'B_BACH3', 1, 2, 1, 13, 'Asignatura optativa BACH'),
+('OPT_87', 'Fundamentos de Administración y Gestión', 'optativa', 'BAP1,BAE1,BGR1,BHS1,BCT1', 'B_BACH4', 1, 1, 1, 1, 'Asignatura optativa BACH'),
+('OPT_88', 'Materia de Modalidad', 'optativa', 'BAP1,BAE1,BGR1,BHS1,BCT1', 'B_BACH4', 1, 1, 1, 2, 'Asignatura optativa BACH'),
+('OPT_89', 'Psicología', 'optativa', 'BAP1,BAE1,BGR1,BHS1,BCT1', 'B_BACH4', 1, 1, 1, 3, 'Asignatura optativa BACH'),
+('OPT_9', 'Comunicación Audiovisual', 'optativa', 'DIV1,ESO3', 'B_ART', 1, 1, 1, 2, 'Asignatura optativa ART');
 
 -- --------------------------------------------------------
 
@@ -350,21 +630,6 @@ INSERT INTO `ti_perfiles` (`id`, `perfil`, `opcion`, `extra`) VALUES
 (82, 'Condiciones personales o historia escolar', 'Larga convalecencia', ''),
 (83, 'Condiciones personales o historia escolar', 'Situación medica señalada por SMS', ''),
 (84, 'Condiciones personales o historia escolar', 'Ideas autolesivas', '');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `ti_reglas_grupo`
---
-
-CREATE TABLE `ti_reglas_grupo` (
-  `id` int(11) NOT NULL,
-  `cod_grupo` varchar(50) NOT NULL,
-  `grupo_eleccion` varchar(50) NOT NULL,
-  `descripcion` varchar(255) NOT NULL,
-  `min_selecciones` int(11) NOT NULL DEFAULT 1,
-  `max_selecciones` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -490,6 +755,28 @@ INSERT INTO `ttalu1` (`cod_acneae`, `Acneae`, `Texto1`, `Texto2`, `id_plumier`, 
 ('Tr.des.LyC / fluidez', 'Trastornos del desarrollo del lenguaje y la comunicación (fluidez)', 'Alumno/a  con necesidad específica de apoyo educativo, por presentar dificultades persistentes, leve o moderada, en la adquisición y uso del lenguaje en todas sus modalidades debido a trastornos de la fluidez.', 'Además presenta dificultades persistentes, leve o moderada, en la adquisición y uso del lenguaje en todas sus modalidades debido a trastornos de la fluidez.', 'TLC', 'Trastorno del Lenguaje y Comunicación', 'No NEE'),
 ('Tr.des.LyC / fonol.', 'Trastornos del desarrollo del lenguaje y la comunicación (tr-fon)', 'Alumno/a  con necesidad específica de apoyo educativo, por presentar dificultades persistentes, leve o moderada, en la adquisición y uso del lenguaje en todas sus modalidades por trastorno fonológico.', 'Además presenta dificultades persistentes, leve o moderada, en la adquisición y uso del lenguaje en todas sus modalidades por trastorno fonológico.', 'TLC', 'Trastorno del Lenguaje y Comunicación', 'No NEE'),
 ('Tr.des.LyC/', 'Trastorno del desarrollo del lenguaje y la comunicación', 'Alumno/a  con necesidad específica de apoyo educativo, por presentar dificultades persistentes, leve o moderada, en la adquisición y uso del lenguaje en todas sus modalidades debido a deficiencias de la comprensión o la producción (expresión); trasto', 'Además presenta dificultades persistentes, leve o moderada, en la adquisición y uso del lenguaje en todas sus modalidades debido a deficiencias de la comprensión o la producción (expresión); trastorno fonológico; trastorno de la fluidez; o trastorno ', 'TLC', 'Trastorno del Lenguaje y Comunicación', 'No NEE');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ttap1`
+--
+
+CREATE TABLE `ttap1` (
+  `Texto1` int(11) NOT NULL,
+  `Texto2` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `ttap1`
+--
+
+INSERT INTO `ttap1` (`Texto1`, `Texto2`) VALUES
+(1, 'se atenderán aspectos relacionados con habilidades lecto-escritoras'),
+(2, 'se promoverá el desarrollo de funciones ejecutivas'),
+(3, 'se trabajarán aspectos a mejorar de su competencia matemática'),
+(4, 'se dedicará tiempo para mejorar su conducta'),
+(5, 'se harán ejercicios de fortalecimiento emocional');
 
 -- --------------------------------------------------------
 
@@ -994,59 +1281,6 @@ INSERT INTO `ttgr1` (`cod_grupo`, `etapa`, `etapa_1`, `curso`, `grupo`, `cod_niv
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `ttmatop`
---
-
-CREATE TABLE `ttmatop` (
-  `id_optativa` int(11) NOT NULL,
-  `cod_nivel` varchar(5) DEFAULT NULL,
-  `cod_opt` varchar(4) DEFAULT NULL,
-  `Mat1` varchar(10) DEFAULT NULL,
-  `Mat2` varchar(10) DEFAULT NULL,
-  `Mat3` varchar(10) DEFAULT NULL,
-  `Mat4` varchar(10) DEFAULT NULL,
-  `Mat5` varchar(10) DEFAULT NULL,
-  `Mat6` varchar(10) DEFAULT NULL,
-  `Mat7` varchar(10) DEFAULT NULL,
-  `Mat8` varchar(10) DEFAULT NULL,
-  `Mat9` varchar(10) DEFAULT NULL,
-  `Mat10` varchar(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Volcado de datos para la tabla `ttmatop`
---
-
-INSERT INTO `ttmatop` (`id_optativa`, `cod_nivel`, `cod_opt`, `Mat1`, `Mat2`, `Mat3`, `Mat4`, `Mat5`, `Mat6`, `Mat7`, `Mat8`, `Mat9`, `Mat10`) VALUES
-(1, 'INF1', 'opt1', 'Religión', 'Atención E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(2, 'INF2', 'opt1', 'Religión', 'Atención E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(3, 'INF3', 'opt1', 'Religión', 'Atención E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(4, 'PRI1', 'opt1', 'Religión', 'Atención E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(5, 'PRI2', 'opt1', 'Religión', 'Atención E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(6, 'PRI3', 'opt1', 'Religión', 'Atención E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(7, 'PRI4', 'opt1', 'Religión', 'Atención E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(8, 'PRI5', 'opt1', 'Religión', 'Atención E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(9, 'PRI5', 'opt2', 'Segunda Le', 'Refuerzo d', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(10, 'PRI6', 'opt1', 'Religión', 'Atención E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(11, 'PRI6', 'opt2', 'Segunda Le', 'Refuerzo d', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(12, 'ESO1', 'opt1', 'Religión', 'Atención E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(13, 'ESO2', 'opt2', 'Segunda Le', 'Refuerzo d', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(14, 'ESO3', 'opt1', 'Religión', 'Atención E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(15, 'ESO3', 'opt2', 'Segunda Le', 'Refuerzo d', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(16, 'ESO3', 'opt3', 'Artes Escé', 'Comunicaci', 'Cultura Cl', 'Digitaliza', 'Emprendimi', 'Segunda Le', NULL, NULL, NULL, NULL),
-(17, 'ESO4', 'opt1', 'Religión', 'Atención E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(18, 'ESO4', 'opt4', 'Matemática', 'Matemática', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(19, 'ESO4', 'opt5', 'Biología y', 'Digitaliza', 'Economía y', 'Expresión ', 'Física y Q', 'Formación ', 'Latín', 'Música', 'Segunda Le', 'Tecnología'),
-(20, 'ESO4', 'opt6', 'Proyecto d', 'Proyecto d', 'Proyecto d', 'Proyecto d', 'Proyecto d', 'Proyecto d', 'Proyecto d', NULL, NULL, NULL),
-(21, 'DIV1', 'opt1', 'Religión', 'Atención E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(22, 'DIV1', 'opt3', 'Artes Escé', 'Comunicaci', 'Cultura Cl', 'Digitaliza', 'Emprendimi', 'Segunda Le', NULL, NULL, NULL, NULL),
-(23, 'DIV2', 'opt1', 'Religión', 'Atención E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(24, 'DIV2', 'opt6', 'Proyecto d', 'Proyecto d', 'Proyecto d', 'Proyecto d', 'Proyecto d', 'Proyecto d', 'Proyecto d', NULL, NULL, NULL),
-(25, 'FPB2', 'opt1', 'Religión', 'Atención E', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `ttprev0`
 --
 
@@ -1244,6 +1478,54 @@ ALTER TABLE `tidua1_1`
   ADD PRIMARY KEY (`id_alum`);
 
 --
+-- Indices de la tabla `tidua2_1`
+--
+ALTER TABLE `tidua2_1`
+  ADD PRIMARY KEY (`id_alum`);
+
+--
+-- Indices de la tabla `tidua3_1`
+--
+ALTER TABLE `tidua3_1`
+  ADD PRIMARY KEY (`id_alum`);
+
+--
+-- Indices de la tabla `tidua4_1`
+--
+ALTER TABLE `tidua4_1`
+  ADD PRIMARY KEY (`id_alum`);
+
+--
+-- Indices de la tabla `tidua5_1`
+--
+ALTER TABLE `tidua5_1`
+  ADD PRIMARY KEY (`id_alum`);
+
+--
+-- Indices de la tabla `tidua6_1`
+--
+ALTER TABLE `tidua6_1`
+  ADD PRIMARY KEY (`id_alum`);
+
+--
+-- Indices de la tabla `tidua7_1`
+--
+ALTER TABLE `tidua7_1`
+  ADD PRIMARY KEY (`id_alum`);
+
+--
+-- Indices de la tabla `tidua8_1`
+--
+ALTER TABLE `tidua8_1`
+  ADD PRIMARY KEY (`id_alum`);
+
+--
+-- Indices de la tabla `tidua9_1`
+--
+ALTER TABLE `tidua9_1`
+  ADD PRIMARY KEY (`id_alum`);
+
+--
 -- Indices de la tabla `ti_alu1`
 --
 ALTER TABLE `ti_alu1`
@@ -1255,8 +1537,9 @@ ALTER TABLE `ti_alu1`
 -- Indices de la tabla `ti_asignaciones`
 --
 ALTER TABLE `ti_asignaciones`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uniq_asignacion` (`id_alu`,`cod_grupo`,`id_materia`);
+  ADD PRIMARY KEY (`id_asignacion`),
+  ADD KEY `fk_asig_alumno` (`id_alu`),
+  ADD KEY `fk_asig_materia` (`cod_materia`);
 
 --
 -- Indices de la tabla `ti_gr1`
@@ -1268,19 +1551,12 @@ ALTER TABLE `ti_gr1`
 -- Indices de la tabla `ti_materias`
 --
 ALTER TABLE `ti_materias`
-  ADD PRIMARY KEY (`id_materia`),
-  ADD UNIQUE KEY `codigo` (`codigo`);
+  ADD PRIMARY KEY (`cod_materia`);
 
 --
 -- Indices de la tabla `ti_perfiles`
 --
 ALTER TABLE `ti_perfiles`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `ti_reglas_grupo`
---
-ALTER TABLE `ti_reglas_grupo`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1296,6 +1572,12 @@ ALTER TABLE `ttalu1`
   ADD PRIMARY KEY (`cod_acneae`);
 
 --
+-- Indices de la tabla `ttap1`
+--
+ALTER TABLE `ttap1`
+  ADD PRIMARY KEY (`Texto1`);
+
+--
 -- Indices de la tabla `ttcentros`
 --
 ALTER TABLE `ttcentros`
@@ -1308,12 +1590,6 @@ ALTER TABLE `ttcentros`
 ALTER TABLE `ttgr1`
   ADD PRIMARY KEY (`cod_grupo`),
   ADD UNIQUE KEY `cod_grupo` (`cod_grupo`);
-
---
--- Indices de la tabla `ttmatop`
---
-ALTER TABLE `ttmatop`
-  ADD UNIQUE KEY `id` (`id_optativa`);
 
 --
 -- Indices de la tabla `ttprev0`
@@ -1350,7 +1626,7 @@ ALTER TABLE `progreso`
 -- AUTO_INCREMENT de la tabla `ti_asignaciones`
 --
 ALTER TABLE `ti_asignaciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_asignacion` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `ti_gr1`
@@ -1359,34 +1635,16 @@ ALTER TABLE `ti_gr1`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
--- AUTO_INCREMENT de la tabla `ti_materias`
---
-ALTER TABLE `ti_materias`
-  MODIFY `id_materia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=193;
-
---
 -- AUTO_INCREMENT de la tabla `ti_perfiles`
 --
 ALTER TABLE `ti_perfiles`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
 
 --
--- AUTO_INCREMENT de la tabla `ti_reglas_grupo`
---
-ALTER TABLE `ti_reglas_grupo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `ti_tipologia`
 --
 ALTER TABLE `ti_tipologia`
   MODIFY `id_alu` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
--- AUTO_INCREMENT de la tabla `ttmatop`
---
-ALTER TABLE `ttmatop`
-  MODIFY `id_optativa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT de la tabla `ttprev0`
@@ -1405,6 +1663,17 @@ ALTER TABLE `tt_perfiles_extras`
 --
 ALTER TABLE `usuarios`
   MODIFY `id_user` int(200) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `ti_asignaciones`
+--
+ALTER TABLE `ti_asignaciones`
+  ADD CONSTRAINT `fk_asig_alumno` FOREIGN KEY (`id_alu`) REFERENCES `ti_alu1` (`id_alu`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_asig_materia` FOREIGN KEY (`cod_materia`) REFERENCES `ti_materias` (`cod_materia`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

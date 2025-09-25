@@ -12,27 +12,28 @@ try {
         exit;
     }
 
-    $cod_grupo = $_POST['cod_grupo'] ?? null;
-    $id_user   = $_POST['id_user'] ?? null;
-    $materias  = $_POST['materias'] ?? [];
+    // Recoger datos
+    $id_alu   = $_POST['id_alu'] ?? null;
+    $cod_grupo = $_POST['cod_grupo'] ?? null; // lo dejamos por si quieres diferenciar subgrupo
+    $materias = $_POST['materias'] ?? [];
 
-    if (!$cod_grupo || !$id_user) {
+    if (!$id_alu || !$cod_grupo) {
         echo json_encode(['success' => false, 'message' => 'Faltan parámetros obligatorios']);
         exit;
     }
 
-    // 🔹 Iniciar transacción para asegurar consistencia
+    // 🔹 Iniciar transacción
     $pdo->beginTransaction();
 
-    // 1. Eliminar asignaciones previas del alumno en este grupo
-    $stmt = $pdo->prepare("DELETE FROM ti_asignaciones WHERE id_user = ? AND cod_grupo = ?");
-    $stmt->execute([$id_user, $cod_grupo]);
+    // 1. Eliminar asignaciones previas del alumno
+    $stmt = $pdo->prepare("DELETE FROM ti_asignaciones WHERE id_alu = ? AND cod_grupo = ?");
+    $stmt->execute([$id_alu, $cod_grupo]);
 
     // 2. Insertar nuevas asignaciones
     if (!empty($materias) && is_array($materias)) {
-        $stmt2 = $pdo->prepare("INSERT INTO ti_asignaciones (id_user, cod_grupo, cod_materia) VALUES (?, ?, ?)");
+        $stmt2 = $pdo->prepare("INSERT INTO ti_asignaciones (id_alu, cod_grupo, cod_materia) VALUES (?, ?, ?)");
         foreach ($materias as $cod_materia) {
-            $stmt2->execute([$id_user, $cod_grupo, $cod_materia]);
+            $stmt2->execute([$id_alu, $cod_grupo, $cod_materia]);
         }
     }
 
