@@ -145,7 +145,7 @@ async function cargarGrupos() {
                     if (action === 'tipo') {
                         window.location.href = '../../frontend/tipo/create_tipo.php';
                     } else if (action === 'materias') {
-                        window.location.href = '../../frontend/materias/asignar_materias.php';
+                        window.location.href = '../materias/asignar_mat.php';
                     }
                 } else {
                     alert("Error al fijar el alumno: " + data.message);
