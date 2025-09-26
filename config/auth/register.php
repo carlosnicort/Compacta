@@ -42,5 +42,8 @@ try {
     $stmt->execute([$nombre, $apellidos, $email, $hash, $cod_centro, $rol, $observaciones]);
     echo json_encode(['success' => true, 'message' => "Registro completado correctamente."]);
 } catch (PDOException $e) {
-    echo json_encode(['success' => false, 'message' => "Error al registrar usuario."]);
+    echo json_encode([
+        'success' => false,
+        'message' => "Error al registrar usuario: " . $e->getMessage()
+    ]);
 }

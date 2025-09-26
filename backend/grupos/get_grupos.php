@@ -8,35 +8,61 @@ require_once __DIR__ . '/../../lib/helpers.php';
 requireAuth();
 
 $userId = $_SESSION['user_id'];
+$rol = $_SESSION['rol'];
+$cod_centro = $_SESSION['cod_centro'];
+
+// Función auxiliar opcional para obtener la fecha de última edición de un alumno
+function get_fecha_ultima_edicion($pdo, $id_alu) {
+    $stmt = $pdo->prepare("SELECT fecha FROM ti_alu1 WHERE id_alu = ?");
+    $stmt->execute([$id_alu]);
+    $fecha = $stmt->fetchColumn();
+    return $fecha ?: null;
+}
 
 try {
-    // Obtener todos los grupos del usuario
-    $stmt = $pdo->prepare("SELECT * FROM ti_gr1 WHERE id_user = ?");
-    $stmt->execute([$userId]);
+    // 1. Obtener grupos según rol
+    if ($rol === 'Director') {
+        $stmt = $pdo->prepare("SELECT * FROM ti_gr1 WHERE cod_centro = ? ORDER BY cod_grupo");
+        $stmt->execute([$cod_centro]);
+    } else { // Tutor
+        $stmt = $pdo->prepare("SELECT * FROM ti_gr1 WHERE id_user = ? ORDER BY cod_grupo");
+        $stmt->execute([$userId]);
+    }
+
     $grupos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    foreach ($grupos as $i => $g) {
-        $listado = (int) $g['listado'];
-        $alumnos = [];
+ // 2. Construir lista de alumnos por grupo
+foreach ($grupos as $i => $g) {
+    $listado = (int) $g['listado'];
+    $alumnos = [];
 
-        for ($n = 1; $n <= $listado; $n++) {
-            // Construir id_alu consistente con create_tipo.php
-            $id_alu = build_id_alu($g['cod_centro'], $g['cod_grupo'], $n);
+    for ($n = 1; $n <= $listado; $n++) {
+        $id_alu = build_id_alu($g['cod_centro'], $g['cod_grupo'], $n);
 
-            // Comprobar si ya existe tipo para este alumno
-            $stmtTipo = $pdo->prepare("SELECT 1 FROM ti_alu1 WHERE id_alu = ?");
-            $stmtTipo->execute([$id_alu]);
-            $tipo_creado = $stmtTipo->fetchColumn() ? true : false;
+        // Comprobar si ya existe tipo para este alumno
+        $stmtTipo = $pdo->prepare("SELECT 1 FROM ti_alu1 WHERE id_alu = ?");
+        $stmtTipo->execute([$id_alu]);
+        $tipo_creado = $stmtTipo->fetchColumn() ? true : false;
 
-            $alumnos[] = [
-                'id_alu' => $id_alu,
-                'id_user' => $userId,
-                'tipo_creado' => $tipo_creado
-            ];
-        }
+        // Comprobar si ya tiene asignadas materias
+        $stmtMat = $pdo->prepare("SELECT 1 FROM ti_asignaciones WHERE id_alu = ?");
+        $stmtMat->execute([$id_alu]);
+        $tiene_materias = $stmtMat->fetchColumn() ? true : false;
 
-        $grupos[$i]['alumnos'] = $alumnos;
+        // Obtener fecha última edición
+        $fecha_ultima_edicion = get_fecha_ultima_edicion($pdo, $id_alu);
+
+        $alumnos[] = [
+            'id_alu' => $id_alu,
+            'id_user' => $g['id_user'],
+            'tipo_creado' => $tipo_creado,
+            'tiene_materias' => $tiene_materias,
+            'fecha_ultima_edicion' => $fecha_ultima_edicion
+        ];
     }
+
+    $grupos[$i]['alumnos'] = $alumnos;
+}
 
     echo json_encode([
         'success' => true,

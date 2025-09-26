@@ -23,6 +23,22 @@ $cod_nivel = substr($cod_grupo, 0, -1);
 <meta charset="utf-8">
 <title>Asignar materias al alumno</title>
 <style>
+#infoAlumno {
+    border: 2px solid #0066cc;
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin: 15px 0;
+    background-color: #f0f8ff;
+    font-size: 14px;
+}
+#infoAlumno p {
+    margin: 5px 0;
+}
+#infoAlumno span {
+    color: #003366;
+    font-weight: bold;
+}
+
     body { font-family: Arial, sans-serif; }
     form { max-width: 700px; margin: 20px auto; padding: 20px; border: 1px solid #ccc; }
     h1 { text-align: center; }
@@ -35,7 +51,11 @@ $cod_nivel = substr($cod_grupo, 0, -1);
 </style>
 </head>
 <body>
-
+<!-- Bloque de información del alumno -->
+<div id="infoAlumno">
+    <p><strong>Código de grupo:</strong> <span id="infoCodGrupo"><?= htmlspecialchars($cod_grupo) ?></span></p>
+    <p><strong>ID Alumno:</strong> <span id="infoIdAlu"><?= htmlspecialchars($id_alu) ?></span></p>
+</div>
 <h1>Asignar materias al alumno</h1>
 <div id="mensaje"></div>
 
@@ -136,21 +156,49 @@ async function cargarMaterias() {
     }
 }
 
-// Validar selección de bloques
+// Validar selección de bloques (reemplaza la función anterior)
 function validarBloques() {
+    // Construimos un objeto con info por bloque: min, max, count (seleccionadas) y opciones (total)
     const bloques = {};
     document.querySelectorAll('input[type="checkbox"][data-bloque]').forEach(chk => {
         const bloque = chk.dataset.bloque;
-        if (!bloques[bloque]) bloques[bloque] = { min: +chk.dataset.min, max: +chk.dataset.max, count: 0 };
-        if (chk.checked) bloques[bloque].count++;
+        const min = +chk.dataset.min || 0;
+        const max = +chk.dataset.max || 0;
+        if (!bloques[bloque]) bloques[bloque] = { min: min, max: max, count: 0, options: 0 };
+        bloques[bloque].options += 1;
+        if (chk.checked) bloques[bloque].count += 1;
     });
 
-    for (const [bloque, {min, max, count}] of Object.entries(bloques)) {
+    // Validación individual por bloque (min/max)
+    for (const [bloque, info] of Object.entries(bloques)) {
+        const { min, max, count } = info;
         if (count < min || count > max) {
             alert(`El bloque "${bloque}" requiere entre ${min} y ${max} selecciones. Actualmente: ${count}`);
             return false;
         }
     }
+
+    // Obtener todos los checkboxes de B_BACH3 y B_BACH4
+const bloquesBach3 = document.querySelectorAll('input[data-bloque="B_BACH3"]');
+const bloquesBach4 = document.querySelectorAll('input[data-bloque="B_BACH4"]');
+
+// Solo aplicar regla si hay opciones en al menos uno de los bloques
+if (bloquesBach3.length > 0 || bloquesBach4.length > 0) {
+    const seleccionB3 = Array.from(bloquesBach3).filter(c => c.checked).length;
+    const seleccionB4 = Array.from(bloquesBach4).filter(c => c.checked).length;
+
+    // Regla: no ambos vacíos, no ambos llenos, min/max según bloque
+    if ((seleccionB3 === 0 && seleccionB4 === 0) ||
+        (seleccionB3 > 0 && seleccionB4 > 0) ||
+        (seleccionB3 > 0 && seleccionB3 !== 2) ||
+        (seleccionB4 > 0 && seleccionB4 !== 1)) {
+        alert('Debes seleccionar correctamente los bloques B_BACH3 y B_BACH4 según las reglas.');
+        return false;
+    }
+}
+
+
+    // Todo ok
     return true;
 }
 

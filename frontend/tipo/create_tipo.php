@@ -46,11 +46,32 @@ try {
 <meta charset="utf-8">
 <title>Crear Tipo</title>
 <style>
+#infoAlumno {
+    border: 2px solid #0066cc;
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin: 15px 0;
+    background-color: #f0f8ff;
+    font-size: 14px;
+}
+#infoAlumno p {
+    margin: 5px 0;
+}
+#infoAlumno span {
+    color: #003366;
+    font-weight: bold;
+}
     label { display: block; margin-top: 10px; }
     select, input[type="text"] { width: 300px; }
 </style>
 </head>
 <body>
+<!-- Bloque de información del alumno -->
+<div id="infoAlumno">
+    <p><strong>Código de grupo:</strong> <span id="infoCodGrupo"><?= htmlspecialchars($cod_grupo) ?></span></p>
+    <p><strong>ID Alumno:</strong> <span id="infoIdAlu"><?= htmlspecialchars($id_alu) ?></span></p>
+</div>
+
 <h1>Registro de Tipología</h1>
 
 <div id="mensaje" style="color:red"></div>
