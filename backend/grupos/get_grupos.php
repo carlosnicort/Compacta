@@ -44,21 +44,33 @@ foreach ($grupos as $i => $g) {
         $stmtTipo->execute([$id_alu]);
         $tipo_creado = $stmtTipo->fetchColumn() ? true : false;
 
-        // Comprobar si ya tiene asignadas materias
-        $stmtMat = $pdo->prepare("SELECT 1 FROM ti_asignaciones WHERE id_alu = ?");
-        $stmtMat->execute([$id_alu]);
-        $tiene_materias = $stmtMat->fetchColumn() ? true : false;
-
         // Obtener fecha última edición
         $fecha_ultima_edicion = get_fecha_ultima_edicion($pdo, $id_alu);
 
-        $alumnos[] = [
-            'id_alu' => $id_alu,
-            'id_user' => $g['id_user'],
-            'tipo_creado' => $tipo_creado,
-            'tiene_materias' => $tiene_materias,
-            'fecha_ultima_edicion' => $fecha_ultima_edicion
-        ];
+        // Comprobar si tiene materias asignadas
+		$stmtMat = $pdo->prepare("SELECT 1 FROM ti_asignaciones WHERE id_alu = ?");
+		$stmtMat->execute([$id_alu]);
+		$tiene_materias = $stmtMat->fetchColumn() ? true : false;
+
+		// Comprobar si fase 0 completada
+		$stmtFase0 = $pdo->prepare("SELECT 1 FROM ti_fase0 WHERE id_alu = ?");
+		$stmtFase0->execute([$id_alu]);
+		$fase0_completada = $stmtFase0->fetchColumn() ? true : false;
+
+		// Comprobar si fase DUA completada
+		$stmtFaseDUA = $pdo->prepare("SELECT 1 FROM ti_fase_dua WHERE id_alu = ?");
+		$stmtFaseDUA->execute([$id_alu]);
+		$faseDUA_completada = $stmtFaseDUA->fetchColumn() ? true : false;
+
+		$alumnos[] = [
+			'id_alu' => $id_alu,
+			'id_user' => $g['id_user'],
+			'tipo_creado' => $tipo_creado,
+			'tiene_materias' => $tiene_materias,
+			'fase0_completada' => $fase0_completada,
+			'faseDUA_completada' => $faseDUA_completada,
+			'fecha_ultima_edicion' => $fecha_ultima_edicion
+		];
     }
 
     $grupos[$i]['alumnos'] = $alumnos;

@@ -89,7 +89,8 @@ $puedeCrear = $numGrupos < $maxGrupos;
 <?php else: ?>
     <span style="color:gray;" title="Has alcanzado el máximo de grupos">Crear nuevo grupo</span>
 <?php endif; ?> |
-<a href="../menu.php">Volver al Menú</a>
+<a href="../menu.php">Ver progreso</a>
+<p><a href="../../public/logout.php">Cerrar sesión</a></p>
 </p>
 
 <script>
@@ -134,19 +135,30 @@ async function cargarGrupos() {
 
 			// Filas de alumnos
 			for (let i = 1; i <= g.listado; i++) {
-				const alumno = g.alumnos && g.alumnos[i-1] ? g.alumnos[i-1] : { id_user: idUser, tipo_creado: false, tiene_materias: false, fecha_ultima_edicion: null };
+				const alumno = g.alumnos && g.alumnos[i-1] ? g.alumnos[i-1] : { 
+					id_user: idUser, 
+					tipo_creado: false, 
+					tiene_materias: false, 
+					fecha_ultima_edicion: null,
+					fase0_completada: false,
+					faseDUA_completada: false
+				};
 
 				const trAlumno = document.createElement('tr');
 				trAlumno.classList.add('subfila');
 
 				// Texto dinámico según estado
 				const linkTipo = alumno.tipo_creado ? 'Ver/Editar Perfil' : 'Crear Tipo';
-
-				// Activar link de materias solo si el tipo ya está creado
 				const linkMaterias = alumno.tipo_creado 
 					? (alumno.tiene_materias ? 'Editar Materias' : 'Asignar Materias') 
 					: 'No disponible';
-				const linkClass = alumno.tipo_creado ? 'set-alumno' : 'bloqueado';
+				const linkClassMaterias = alumno.tipo_creado ? 'set-alumno' : 'bloqueado';
+
+				const linkFase0 = alumno.tiene_materias ? 'Fase 0' : 'No disponible';
+				const linkClassFase0 = alumno.tiene_materias ? 'set-alumno' : 'bloqueado';
+
+				const linkFaseDUA = alumno.fase0_completada ? 'Fase DUA' : 'No disponible';
+				const linkClassFaseDUA = alumno.fase0_completada ? 'set-alumno' : 'bloqueado';
 
 				const fechaEdit = alumno.fecha_ultima_edicion ? alumno.fecha_ultima_edicion : '-';
 
@@ -159,14 +171,25 @@ async function cargarGrupos() {
 						</a>
 					</td>
 					<td>
-						<a href="#" class="${linkClass}" data-index="${i}" data-codgrupo="${g.cod_grupo}" data-idalu="${alumno.id_alu}" data-action="materias">
+						<a href="#" class="${linkClassMaterias}" data-index="${i}" data-codgrupo="${g.cod_grupo}" data-idalu="${alumno.id_alu}" data-action="materias">
 							${linkMaterias}
 						</a>
 					</td>
-					<td colspan="3">Última edición: ${fechaEdit}</td>
+					<td>
+						<a href="#" class="${linkClassFase0}" data-index="${i}" data-codgrupo="${g.cod_grupo}" data-idalu="${alumno.id_alu}" data-action="fase0">
+							${linkFase0}
+						</a>
+					</td>
+					<td>
+						<a href="#" class="${linkClassFaseDUA}" data-index="${i}" data-codgrupo="${g.cod_grupo}" data-idalu="${alumno.id_alu}" data-action="faseDUA">
+							${linkFaseDUA}
+						</a>
+					</td>
+					<td>Última edición: ${fechaEdit}</td>
 				`;
 				cuerpo.appendChild(trAlumno);
 			}
+
 
 		}
 
@@ -174,39 +197,38 @@ async function cargarGrupos() {
     // ----------------------------
     // Delegación de eventos: click en cualquier .set-alumno
     // ----------------------------
-    document.getElementById('cuerpoTabla').addEventListener('click', async e => {
-        const el = e.target.closest('.set-alumno');
-        if (!el) return;
+	document.getElementById('cuerpoTabla').addEventListener('click', async e => {
+		const el = e.target.closest('.set-alumno');
+		if (!el) return;
 
-        e.preventDefault();
-        const index = el.dataset.index;
-        const cod_grupo = el.dataset.codgrupo;
-        const action = el.dataset.action;
-        const id_alu = el.dataset.idalu;
+		e.preventDefault();
+		const index = el.dataset.index;
+		const cod_grupo = el.dataset.codgrupo;
+		const action = el.dataset.action;
+		const id_alu = el.dataset.idalu;
 
-        try {	
-            const resp = await fetch('../../backend/session/set_current.php', {
-                method: 'POST',
-                body: JSON.stringify({ index, cod_grupo, id_alu }),
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'same-origin'
-            });
-            const data = await resp.json();
-            if (data.success) {
-                // Redirige según acción
-                if (action === 'tipo') {
-                    window.location.href = '../../frontend/tipo/create_tipo.php';
-                } else if (action === 'materias') {
-                    window.location.href = '../materias/asignar_mat.php';
-                }
-            } else {
-                alert("Error al fijar el alumno: " + data.message);
-            }
-        } catch (err) {
-            alert("Error de conexión");
-            console.error(err);
-        }
-    });
+		try {    
+			const resp = await fetch('../../backend/session/set_current.php', {
+				method: 'POST',
+				body: JSON.stringify({ index, cod_grupo, id_alu }),
+				headers: { 'Content-Type': 'application/json' },
+				credentials: 'same-origin'
+			});
+			const data = await resp.json();
+			if (data.success) {
+				// Redirige según acción
+				if (action === 'tipo') window.location.href = '../../frontend/tipo/create_tipo.php';
+				else if (action === 'materias') window.location.href = '../materias/asignar_mat.php';
+				else if (action === 'fase0') window.location.href = '../fase/fase_cero.php';
+				else if (action === 'faseDUA') window.location.href = '../fase/fase_dua.php';
+			} else {
+				alert("Error al fijar el alumno: " + data.message);
+			}
+		} catch (err) {
+			alert("Error de conexión");
+			console.error(err);
+		}
+	});
 }
 
 // Carga inicial

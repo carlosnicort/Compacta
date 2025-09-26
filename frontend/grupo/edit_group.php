@@ -90,7 +90,7 @@ $centro = $stmtCentro->fetch(PDO::FETCH_ASSOC);
     <button type="button" onclick="window.location='ver_group.php'">Volver sin guardar</button>
 </form>
 
-<p><a href="../menu.php">Volver al Menú</a></p>
+<p><a href="/ver_group.php">Volver al Menú</a></p>
 
 <script>
 // Cargar datos del grupo

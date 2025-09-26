@@ -59,7 +59,7 @@ form.addEventListener('submit', async (e) => {
 
         if (result.success) {
             form.reset();
-			window.location.href = '../frontend/menu.php';
+			window.location.href = '../frontend/grupos/ver_group.php';
         } else {
             msgDiv.textContent = result.message;
         }

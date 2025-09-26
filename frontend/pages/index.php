@@ -45,7 +45,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 
         if (data.success) {
             // Redirigir al menú principal
-            window.location.href = '../../public/menu.php';
+            window.location.href = '../grupo/ver_group.php';
         } else {
             document.getElementById('errorMsg').textContent = data.message;
         }

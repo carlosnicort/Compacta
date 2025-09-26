@@ -22,8 +22,7 @@
     </thead>
     <tbody id="cuerpoTabla"></tbody>
 </table>
-<p><a href="ver_group.php">⬅ Volver a Grupos</a></p>
-<p><a href="menu.php">⬅ Volver al Menú</a></p>
+<a href="../grupo/ver_group.php">Volver al menú</a>
 
 <script>
 const cod_grupo = '<?= $_GET['grupo'] ?? $_SESSION['current_group'] ?? '' ?>';

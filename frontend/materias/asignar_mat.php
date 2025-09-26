@@ -73,7 +73,7 @@ $cod_nivel = substr($cod_grupo, 0, -1);
 </form>
 
 <p style="text-align:center;">
-    <a href="../grupo/ver_group.php">Volver a grupos</a>
+    <a href="../grupo/ver_group.php">Volver al menú</a>
 </p>
 
 <script>

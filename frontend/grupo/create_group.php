@@ -124,7 +124,7 @@ try {
 
     <button type="submit">Guardar</button>
 </form>
-<a href="../menu.php">Volver al Menú</a>
+<a href="/ver_group.php">Volver al Menú</a>
 
 <p id="mensaje" style="color:red;"></p>
 

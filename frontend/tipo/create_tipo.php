@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 index = data.nextIndex;
                 if (index > listado) {
                     alert("Todos los alumnos han sido registrados.");
-                    window.location='../menu.php';
+                    window.location='../grupo/ver_group.php';
                 } else {
                     form.reset();
                     togglePerfil1(); toggleExtra1(); togglePerfil2(); toggleExtra2();
