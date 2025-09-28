@@ -17,11 +17,11 @@ if (!$input || !isset($input['index']) || !isset($input['cod_grupo'])) {
     exit;
 }
 
-// Recuperar datos necesarios de sesión
 $cod_centro = $_SESSION['cod_centro'] ?? null;
 $cod_grupo  = $input['cod_grupo'];
-$index      = (int) $input['index']; // índice del alumno
+$index      = (int) $input['index'];
 
+// Validar datos base
 if (!$cod_centro || !$cod_grupo || $index <= 0) {
     echo json_encode([
         'success' => false,
@@ -30,20 +30,20 @@ if (!$cod_centro || !$cod_grupo || $index <= 0) {
     exit;
 }
 
-// Construir id_alu completo de forma consistente
-$id_alu = build_id_alu($cod_centro, $cod_grupo, $index);
+// Usar id_alu del input si viene explícito, si no, construirlo
+$id_alu = $input['id_alu'] ?? build_id_alu($cod_centro, $cod_grupo, $index);
 
 // Guardar en sesión
 $_SESSION['current_id_alu'] = $id_alu;
 $_SESSION['current_group']  = $cod_grupo;
-$_SESSION['current_index']  = $index; // opcional, útil para create_tipo.php
+$_SESSION['current_index']  = $index;
 
 // Respuesta JSON
 echo json_encode([
-    'success'  => true,
-    'message'  => 'Alumno fijado en sesión correctamente',
-    'id_alu'   => $id_alu,
-    'cod_grupo'=> $cod_grupo,
-    'index'    => $index
+    'success'   => true,
+    'message'   => 'Alumno fijado en sesión correctamente',
+    'id_alu'    => $id_alu,
+    'cod_grupo' => $cod_grupo,
+    'index'     => $index
 ]);
 exit;

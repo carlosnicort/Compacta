@@ -219,8 +219,8 @@ async function cargarGrupos() {
 				// Redirige según acción
 				if (action === 'tipo') window.location.href = '../../frontend/tipo/create_tipo.php';
 				else if (action === 'materias') window.location.href = '../materias/asignar_mat.php';
-				else if (action === 'fase0') window.location.href = '../fase/fase_cero.php';
-				else if (action === 'faseDUA') window.location.href = '../fase/fase_dua.php';
+				else if (action === 'fase0') window.location.href = '../fases/cero/fase_cero.php';
+				else if (action === 'faseDUA') window.location.href = '../fases/dua/fase_dua.php';
 			} else {
 				alert("Error al fijar el alumno: " + data.message);
 			}

@@ -4,7 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 if (isset($_SESSION['user_id'])) {
     // Redirigir si ya está logueado
-    header("Location: ../frontend/menu.php");
+    header("Location: ../frontend/grupo/ver_group.php");
     exit();
 }
 ?>
@@ -59,7 +59,7 @@ form.addEventListener('submit', async (e) => {
 
         if (result.success) {
             form.reset();
-			window.location.href = '../frontend/grupos/ver_group.php';
+			window.location.href = '../frontend/grupo/ver_group.php';
         } else {
             msgDiv.textContent = result.message;
         }

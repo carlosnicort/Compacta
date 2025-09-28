@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(data.success){
             msg.style.color='green';
             msg.textContent = data.message;
-            setTimeout(()=>window.location='../menu.php',1500);
+            setTimeout(()=>window.location='/ver_group.php',1500);
         } else {
             msg.style.color='red';
             msg.textContent = data.message;
